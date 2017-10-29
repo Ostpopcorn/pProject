@@ -43,3 +43,12 @@ class SeatSchedule(object):
         for i in range(self.__bookings.__len__()):
             print(self.master_schedule[i].name, self.master_schedule[i + 1].name)
             print("   ", self.__bookings[i])
+
+    def get_bookings(self, occupant):
+        bookings = []
+        for booking in self.__bookings:
+            if booking is None:
+                continue
+            if booking.occupant is occupant:
+                bookings.append(booking)
+        return bookings

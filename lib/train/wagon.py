@@ -27,6 +27,12 @@ class Wagon(object):
     def get_wagon_number(self):
         return self.__wagon_number
 
+    def get_bookings(self, occupant):
+        bookings = []
+        for row in self.rows:
+            bookings.extend(row.get_bookings(occupant))
+        return bookings
+
     def __getitem__(self, item):
         return self.rows[0]
 

@@ -13,5 +13,5 @@ class TicketPart(object):
 
 
 class CompleteTicket(object):
-    def __init__(self):
-        self.tickets = []
+    def __init__(self, ticket_parts):
+        self.tickets = ticket_parts

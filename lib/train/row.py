@@ -2,7 +2,6 @@ from lib.train.seat import Seat, Walkway
 
 
 class Row(object):
-
     def __init__(self, number_of_seats, walkway_index=-1, start_number=1):
         self.__seats = [Seat(start_number + i) for i in range(number_of_seats)]
         if walkway_index == -1:
@@ -12,7 +11,7 @@ class Row(object):
                 raise IndexError("walkway is outside the row")
         self.walkway_index = walkway_index
 
-    def set_schedule(self,schedule):
+    def set_schedule(self, schedule):
         for seat in self.__seats:
             seat.set_schedule(schedule)
 
@@ -29,8 +28,14 @@ class Row(object):
         if item == self.walkway_index:
             return Walkway()
         if item > self.walkway_index:
-            return self.__seats[item-1]
+            return self.__seats[item - 1]
         return self.__seats[item]
+
+    def get_bookings(self, occupant):
+        bookings = []
+        for seat in self.__seats:
+            bookings.extend(seat.get_bookings(occupant))
+        return bookings
 
 
 if __name__ == '__main__':

@@ -33,10 +33,17 @@ class Seat(object):
             else:
                 raise TypeError("expected int for index.")
 
+    def get_bookings(self, occupant):
+
+        return self.__schedule.get_bookings(occupant)
+
 
 class Walkway(Seat):
     def __init__(self):
         super(Walkway, self).__init__(-1)
 
     def seat_is_booked(self, schedule_index):
+        return False
+
+    def get_bookings(self, occupant):
         return False
