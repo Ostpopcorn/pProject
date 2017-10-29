@@ -1,3 +1,4 @@
+from lib.booking.TicketPart import TicketPart
 from lib.booking.destination import Destination
 
 
@@ -20,21 +21,23 @@ class Schedule(object):
         return self.__destinations[item]
 
 
-class Ticket(object):
-    def __init__(self, a, b, occupant):
-        self.occupant = occupant
-        self.destination = b
-        self.start = a
-
-
 class SeatSchedule(object):
     def __init__(self, wagon_schedule):
         self.master_schedule = wagon_schedule
         self.__bookings = [None for _ in range(self.master_schedule.number_of_stops() - 1)]
 
     def book(self, schedule_index, occupant):
-        self.__bookings[schedule_index] = Ticket(self.master_schedule[schedule_index]
-                                                 , self.master_schedule[schedule_index + 1],occupant)
+        self.__bookings[schedule_index] = TicketPart(self.master_schedule[schedule_index]
+                                                     , self.master_schedule[schedule_index + 1], occupant)
+
+    def is_booked(self, schedule_index):
+        if not isinstance(schedule_index, list):
+            schedule_index = [schedule_index]
+
+        for i in schedule_index:
+            if self.__bookings[i] is not None:
+                return True
+        return False
 
     def print(self):
         for i in range(self.__bookings.__len__()):
