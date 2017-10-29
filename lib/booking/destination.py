@@ -1,2 +1,3 @@
 class Destination(object):
-    pass
+    def __init__(self, place_name):
+        self.name = place_name
