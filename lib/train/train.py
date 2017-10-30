@@ -1,3 +1,4 @@
+from lib.booking.TicketPart import CompleteTicket
 from lib.train.seat import Walkway
 
 
@@ -19,7 +20,8 @@ class Train(object):
         bookings = []
         for wagon in self.wagons:
             bookings.extend(wagon.get_bookings(occupant))
-        return bookings
+        ticket = CompleteTicket(bookings)
+        return ticket
 
     def print_nice_2(self,predicate, horizontal=True):
         wagons = []

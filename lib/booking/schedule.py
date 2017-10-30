@@ -22,13 +22,14 @@ class Schedule(object):
 
     def print_array_formatted(self):
         for i in range(self.__destinations.__len__()):
-            print(self.__destinations[i].name)
-            if i+1 < self.__destinations.__len__():
+            print("#{1}: {0}".format(self.__destinations[i].name, i + 1))
+            if i + 1 < self.__destinations.__len__():
                 # All but last round
-                print("  -Travel time: {0}, Distance {1}".format("unknown","-1"))
-            #else:
+                print("  -Travel time: {0}, Distance {1}".format("unknown", "-1"))
+                # else:
                 # last loop
-                #print("k")
+                # print("k")
+
 
 class SeatSchedule(object):
     def __init__(self, wagon_schedule):
@@ -52,6 +53,14 @@ class SeatSchedule(object):
         for i in range(self.__bookings.__len__()):
             print(self.master_schedule[i].name, self.master_schedule[i + 1].name)
             print("   ", self.__bookings[i])
+
+    def print_array_formatted(self):
+        for i in range(self.master_schedule.number_of_stops()):
+            print("#{1}: {0}".format(self.master_schedule[i].name, i + 1))
+            if i + 1 < self.master_schedule.number_of_stops():
+                # All but last round
+                if not self.__bookings[i] is None:
+                    print("  -Booked by: {0}".format(self.__bookings[i].occupant.name))
 
     def get_bookings(self, occupant):
         bookings = []

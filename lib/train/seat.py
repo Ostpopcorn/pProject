@@ -37,6 +37,10 @@ class Seat(object):
 
         return self.__schedule.get_bookings(occupant)
 
+    def print_formatted(self):
+        print("Seat: {0}".format(self.get_seat_number()))
+        self.__schedule.print_array_formatted()
+
 
 class Walkway(Seat):
     def __init__(self):

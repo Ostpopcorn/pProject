@@ -15,3 +15,17 @@ class TicketPart(object):
 class CompleteTicket(object):
     def __init__(self, ticket_parts):
         self.tickets = ticket_parts
+
+    def print_formatted(self):
+        number_of_dashes = 10
+        print("-" * number_of_dashes)
+        print("Ticket: ")
+        for i in self.tickets:
+            print(str(i))
+        print("-" * number_of_dashes)
+
+    def __str__(self):
+        rstring = ""
+        for i in self.tickets:
+            rstring += str(i) + "\n"
+        return rstring

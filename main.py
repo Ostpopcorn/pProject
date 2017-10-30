@@ -1,3 +1,5 @@
+from lib.train.seat import Seat
+
 if __name__ == '__main__':
     from lib.train.train import Train
     from lib.booking.schedule import Schedule
@@ -20,13 +22,16 @@ if __name__ == '__main__':
 
     # t.print_nice_2()
     a = Person("Sven")
-    t[0][0][0].book([0, 1], a)
-    t[0][0][1].book([0, 1], a)
+    b = Person("Sverker")
+    # t[0][0][0].book([0, 1], a)
+    t[0][0][1].book([0], a)
+    t[0][0][1].book([1], b)
     #t.print_nice_2(lambda x: x.seat_is_booked([0]))
     # single_train_interaction(t)
     # t.print_nice(lambda x : x.seat_is_booked([1]))
-    # print(t.get_bookings(a).__len__())
-    # s = Seat(1)
-    # s.set_schedule(ob)
-    # s.book([0, 1], a)
-    # s.get_schedule.print()
+    t.get_bookings(a).print_formatted()
+    t[0][0][1].print_formatted()
+    s = Seat(1)
+    s.set_schedule(ob)
+    s.book([0, 1], a)
+    # s.get_schedule.print_array_formatted()
