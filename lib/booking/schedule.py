@@ -20,6 +20,15 @@ class Schedule(object):
     def __getitem__(self, item):
         return self.__destinations[item]
 
+    def print_array_formatted(self):
+        for i in range(self.__destinations.__len__()):
+            print(self.__destinations[i].name)
+            if i+1 < self.__destinations.__len__():
+                # All but last round
+                print("  -Travel time: {0}, Distance {1}".format("unknown","-1"))
+            #else:
+                # last loop
+                #print("k")
 
 class SeatSchedule(object):
     def __init__(self, wagon_schedule):

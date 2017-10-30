@@ -20,6 +20,23 @@ class Wagon(object):
             return_list.append(i.print_array())
         return return_list
 
+    def print_array_formatted(self,predicate):
+        return_list = [["|"] for _ in range(self.seats_per_row + 1)]
+        for row_index in range(self.rows.__len__()):
+            for seat_index in range(self.rows[row_index].__len__()):
+                from lib.train.seat import Walkway
+                if isinstance(self.rows[row_index][seat_index],Walkway):
+                    return_list[seat_index].append("{0:3}".format(""))
+                    continue
+                return_list[seat_index].append("{0:3}".format(predicate(self.rows[row_index][seat_index])))
+        for i in range(self.seats_per_row + 1):
+            return_list[i] += "|"
+
+        return_list.insert(0, " " + "-"* (self.rows.__len__()*3)+ " ")
+        return_list.insert(0, (" Wagon #{0:<"+str(self.rows.__len__()*3-6)+ "}").format(self.__wagon_number))
+        return_list.append(" " + "-"* (self.rows.__len__()*3)+ " ")
+        return return_list
+
     def print(self):
         for i in self.rows:
             print(" , ".join(i.print_array()))

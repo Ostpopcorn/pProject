@@ -24,6 +24,10 @@ class Row(object):
             return_array.append("{0:2d}".format(self.__seats[i].get_seat_number()))
         return return_array
 
+    def __len__(self):
+        return self.__seats.__len__() +1
+
+
     def __getitem__(self, item):
         if item == self.walkway_index:
             return Walkway()
