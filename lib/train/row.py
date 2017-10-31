@@ -16,10 +16,17 @@ class Row(object):
         for i in self.__seats:
             i.set_button_text(predicate)
 
+    def set_button_command(self,predicate):
+        for i in self.__seats:
+            i.set_button_command(predicate)
+
     def change_button_states(self, state):
         for i in self.__seats:
             i.change_button_state(state)
 
+    def update_buttons(self,schedule_index,occupant):
+        for i in self.__seats:
+            i.update_button(schedule_index,occupant)
 
     def set_schedule(self, schedule):
         for seat in self.__seats:

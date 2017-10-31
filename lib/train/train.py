@@ -8,6 +8,10 @@ class Train(object):
         self.schedule = None
         self.name = train_name
 
+    def set_button_command(self,predicate):
+        for i in self.wagons:
+            i.set_button_command(predicate)
+
     def set_button_text(self, predicate):
         for i in self.wagons:
             i.set_button_text(predicate)
@@ -15,6 +19,10 @@ class Train(object):
     def change_button_states(self, state):
         for i in self.wagons:
             i.change_button_states(state)
+
+    def update_buttons(self, schedule_index,occupant):
+        for i in self.wagons:
+            i.update_buttons(schedule_index,occupant)
 
     def add_wagon(self, wagon):
         self.wagons.append(wagon)

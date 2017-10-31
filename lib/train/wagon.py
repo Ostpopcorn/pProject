@@ -10,6 +10,9 @@ class Wagon(object):
             self.rows.append(Row(number_of_seats_per_row, walkway_index
                                  , 1 + (number_of_seats_per_row * i)))
 
+    def set_button_command(self,predicate):
+        for i in self.rows:
+            i.set_button_command(predicate)
 
     def set_button_text(self,predicate):
         for i in self.rows:
@@ -22,6 +25,10 @@ class Wagon(object):
     def set_schedule(self, schedule):
         for row in self.rows:
             row.set_schedule(schedule)
+
+    def update_buttons(self, schedule_index,occupant):
+        for i in self.rows:
+            i.update_buttons(schedule_index,occupant)
 
     def print_array(self):
         return_list = []
