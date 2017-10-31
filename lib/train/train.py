@@ -8,6 +8,14 @@ class Train(object):
         self.schedule = None
         self.name = train_name
 
+    def set_button_text(self, predicate):
+        for i in self.wagons:
+            i.set_button_text(predicate)
+
+    def change_button_states(self, state):
+        for i in self.wagons:
+            i.change_button_states(state)
+
     def add_wagon(self, wagon):
         self.wagons.append(wagon)
 
@@ -23,7 +31,7 @@ class Train(object):
         ticket = CompleteTicket(bookings)
         return ticket
 
-    def print_nice_2(self,predicate, horizontal=True):
+    def print_nice_2(self, predicate, horizontal=True):
         wagons = []
         print("Train: {0}".format(self.name))
         for wagon in self.wagons:
@@ -60,4 +68,4 @@ class Train(object):
                 print("")
 
     def __getitem__(self, item):
-        return self.wagons[0]
+        return self.wagons[item]

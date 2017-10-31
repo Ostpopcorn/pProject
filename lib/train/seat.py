@@ -5,6 +5,19 @@ class Seat(object):
     def __init__(self, seat_number):
         self.__seat_number = seat_number
         self.__schedule = None
+        self.__button = None
+
+    def set_button_text(self,predicate):
+        if self.button is None:
+            print("no button assigned")
+            return
+        self.button["text"] = predicate(self)
+
+    def set_button(self,button):
+        self.__button = button
+
+    def change_button_state(self, state):
+        self.__button['state'] = state
 
     def get_seat_number(self):
         return self.__seat_number
@@ -16,7 +29,7 @@ class Seat(object):
     def set_schedule(self, schedule):
         self.__schedule = SeatSchedule(schedule)
 
-    def seat_is_booked(self, schedule_index):
+    def is_booked(self, schedule_index):
 
         return self.get_schedule.is_booked(schedule_index)
 
@@ -46,7 +59,7 @@ class Walkway(Seat):
     def __init__(self):
         super(Walkway, self).__init__(-1)
 
-    def seat_is_booked(self, schedule_index):
+    def is_booked(self, schedule_index):
         return False
 
     def get_bookings(self, occupant):

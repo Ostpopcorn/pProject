@@ -24,6 +24,7 @@ if __name__ == '__main__':
     a = Person("Sven")
     b = Person("Sverker")
     # t[0][0][0].book([0, 1], a)
+    a =  (t[3])
     t[0][0][1].book([0], a)
     t[0][0][1].book([1], b)
     #t.print_nice_2(lambda x: x.seat_is_booked([0]))

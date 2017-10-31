@@ -10,6 +10,15 @@ class Wagon(object):
             self.rows.append(Row(number_of_seats_per_row, walkway_index
                                  , 1 + (number_of_seats_per_row * i)))
 
+
+    def set_button_text(self,predicate):
+        for i in self.rows:
+            i.set_button_text(predicate)
+
+    def change_button_states(self, state):
+        for i in self.rows:
+            i.change_button_states(state)
+
     def set_schedule(self, schedule):
         for row in self.rows:
             row.set_schedule(schedule)
@@ -51,7 +60,10 @@ class Wagon(object):
         return bookings
 
     def __getitem__(self, item):
-        return self.rows[0]
+        return self.rows[item]
+
+    def __len__(self):
+        return self.rows.__len__()
 
 
 if __name__ == '__main__':

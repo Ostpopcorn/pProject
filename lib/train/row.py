@@ -11,6 +11,16 @@ class Row(object):
                 raise IndexError("walkway is outside the row")
         self.walkway_index = walkway_index
 
+
+    def set_button_text(self,predicate):
+        for i in self.__seats:
+            i.set_button_text(predicate)
+
+    def change_button_states(self, state):
+        for i in self.__seats:
+            i.change_button_state(state)
+
+
     def set_schedule(self, schedule):
         for seat in self.__seats:
             seat.set_schedule(schedule)
@@ -25,8 +35,7 @@ class Row(object):
         return return_array
 
     def __len__(self):
-        return self.__seats.__len__() +1
-
+        return self.__seats.__len__() + 1
 
     def __getitem__(self, item):
         if item == self.walkway_index:
