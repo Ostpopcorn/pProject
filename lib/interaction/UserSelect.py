@@ -1,0 +1,2 @@
+class UserSelect(object):
+    pass

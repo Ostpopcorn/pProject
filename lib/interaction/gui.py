@@ -3,7 +3,7 @@ from tkinter import *
 from lib.booking.destination import Destination
 from lib.booking.schedule import Schedule
 from lib.occupant import Person
-from lib.train.seat import Walkway
+from lib.train.seat import Walkway, SeatBookedError
 from lib.train.train import Train
 from lib.train.wagon import Wagon
 
@@ -11,13 +11,13 @@ t = Train("X8000")
 t.add_wagon(Wagon(1, 6, 4))
 t.add_wagon(Wagon(2, 4, 5))
 t.add_wagon(Wagon(3, 2, 3))
-ob = Schedule()
+ob = Schedule() 
 ob.add_destination(Destination("Fjollträsk"))
 ob.add_destination(Destination("Mesberg"))
 ob.add_destination(Destination("Sumptuna"))
 t.set_schedule(ob)
-a = Person("Sven")
-b = Person("Sverker")
+#a = Person("Sven")
+#b = Person("Sverker")
 # t[0][0][0].book([0, 1], a)
 # t[0][0][0].book([0], a)
 # t[0][0][0].book([1], b)
@@ -26,7 +26,7 @@ seat = t[0][0][0]
 
 
 class TrainWindow(object):
-    def __init__(self, train):
+    def __init__(self, train,user,schedule_index):
         self.__train = train
         self.__root = Tk()
         self.__root.geometry("1000x250")
@@ -40,13 +40,16 @@ class TrainWindow(object):
         self.btn_book_height = 1
         self.create_main_buttons()
         self.create_train_buttons()
-        self.current_user = Person("Sven")
+        self.current_user = user
+        self.schedule_index = schedule_index
+        # self.__train[0][0][1].book([0], a)
+        # self.__train[0][0][1].book([1], b)
 
     def create_train_buttons(self):
         train_frame = Frame(self.__root, pady=10, padx=10)
 
-        for tindex in range(t.wagons.__len__()):
-            wagon = t[tindex]
+        for tindex in range(self.__train.wagons.__len__()):
+            wagon =self.__train[tindex]
 
             wagon_frame = Frame(train_frame, pady=10, padx=10)
             a = Label(train_frame, text=wagon.get_wagon_number())
@@ -75,7 +78,7 @@ class TrainWindow(object):
         main_frame = Frame(self.__root, height=1, width=1, pady=10, padx=10)
 
         self.btn_book = Button(main_frame, text="Book trip",
-                               command=lambda :self.init_booking(), height=self.btn_height,
+                               command=lambda: self.init_booking(), height=self.btn_height,
                                width=self.btn_width)
         self.btn_cancel = Button(main_frame, text="Cancel trip",
                                  command=lambda: t.set_button_text(lambda x: x.get_seat_number()),
@@ -94,26 +97,29 @@ class TrainWindow(object):
         main_frame.pack(side=LEFT)
 
     def exit_booking(self):
-        self.btn_book["text"]= "Book Trip"
-        for i in [self.btn_cancel,self.btn_get_ticket]:
+        self.btn_book["text"] = "Book Trip"
+        for i in [self.btn_cancel, self.btn_get_ticket]:
             i["state"] = "normal"
         self.__train.change_button_states("disable")
-        self.btn_book["command"] = lambda :self.init_booking()
+        self.btn_book["command"] = lambda: self.init_booking()
 
     def init_booking(self):
-        self.btn_book["text"]= "Exit Booking"
-        self.btn_book["command"] = lambda :self.exit_booking()
-        for i in [self.btn_cancel,self.btn_get_ticket]:
+        self.btn_book["text"] = "Exit Booking"
+        self.btn_book["command"] = lambda: self.exit_booking()
+        for i in [self.btn_cancel, self.btn_get_ticket]:
             i["state"] = "disable"
         self.__train.change_button_states("normal")
-        self.__train.set_button_command(lambda x:self.update_seat_button_booking_color(x,[0],self.current_user))
+        self.__train.set_button_command(lambda x: self.update_seat_button_booking_color(x, [0], self.current_user))
 
-    def update_seat_button_booking_color(self,seat,stops, occupant):
-        if not isinstance(stops,list):
+    def update_seat_button_booking_color(self, seat, stops, occupant):
+        if not isinstance(stops, list):
             stops = [stops]
-        seat.book([0], occupant)
-        #seat.set_button_text(lambda x:x.is_booked(stops))
-        t.update_buttons(stops,occupant)
+        try:
+            seat.book([0], occupant)
+        except SeatBookedError:
+            print("Seat is already booked")
+        # seat.set_button_text(lambda x:x.is_booked(stops))
+        t.update_buttons(stops, occupant)
 
     def display(self):
         self.__root.mainloop()
@@ -183,7 +189,8 @@ def main_menu():
     t.change_button_states("disabled")
     main_root.mainloop()
 
-
-#main_menu()
-ob = TrainWindow(t)
-ob.display()
+if __name__ == '__main__':
+    print("HAHAHAHAHA")
+    # main_menu()
+    ob = TrainWindow(t)
+    ob.display()

@@ -75,5 +75,8 @@ class Train(object):
                 print("|", end="")
                 print("")
 
+    def train_table_display(self):
+        return "{0}".format(self.name)
+
     def __getitem__(self, item):
         return self.wagons[item]

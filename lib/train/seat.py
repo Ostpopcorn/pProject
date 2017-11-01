@@ -1,22 +1,27 @@
 from lib.booking.schedule import SeatSchedule
 
 
+class SeatBookedError(Exception):
+    def __init__(self, text):
+        Exception.__init__(self,text)
+
+
 class Seat(object):
     def __init__(self, seat_number):
         self.__seat_number = seat_number
         self.__schedule = None
         self.__button = None
 
-    def set_button_command(self,predicate):
-        self.__button["command"] = lambda :predicate(self)
+    def set_button_command(self, predicate):
+        self.__button["command"] = lambda: predicate(self)
 
-    def set_button_text(self,predicate):
+    def set_button_text(self, predicate):
         if self.__button is None:
             print("no button assigned")
             return
         self.__button["text"] = predicate(self)
 
-    def set_button(self,button):
+    def set_button(self, button):
         self.__button = button
 
     def change_button_state(self, state):
@@ -25,7 +30,7 @@ class Seat(object):
     def get_seat_number(self):
         return self.__seat_number
 
-    def update_button(self, schedule_index,occupant):
+    def update_button(self, schedule_index, occupant):
         if not isinstance(schedule_index, list):
             schedule_index = [schedule_index]
         if not self.is_booked(schedule_index):
@@ -35,7 +40,7 @@ class Seat(object):
                 self.__button["background"] = "pale green"
             else:
                 self.__button["background"] = "lavender"
-        # self.set_button_text(lambda x:x.is_booked(schedule_index))
+                # self.set_button_text(lambda x:x.is_booked(schedule_index))
 
     @property
     def get_schedule(self):
@@ -57,8 +62,13 @@ class Seat(object):
 
         for index in schedule_index:
             if isinstance(index, int):
-                self.update_button(schedule_index,occupant)
-                self.__schedule.book(index, occupant)
+                if self.is_booked(schedule_index):
+
+                    if self.__schedule.get_bookings(occupant).__len__() <= 0:
+                        raise SeatBookedError("Seat is already booked")
+                else:
+                    self.update_button(schedule_index, occupant)
+                    self.__schedule.book(index, occupant)
             else:
                 raise TypeError("expected int for index.")
 
@@ -80,3 +90,4 @@ class Walkway(Seat):
 
     def get_bookings(self, occupant):
         return False
+
