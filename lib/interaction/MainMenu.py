@@ -49,7 +49,11 @@ class MainMenu(object):
 
     def view_selected_train(self):
         print("hej")
-        currentindex = (int(self.__train_table.get(self.__train_table.curselection()[0])[1:3]))
+        try:
+            currentindex = (int(self.__train_table.get(self.__train_table.curselection()[0])[1:3]))
+        except IndexError:
+            print("Non selected")
+            return
         print(int(self.__train_table.get(self.__train_table.curselection()[0])[1:3]))
 
         from lib.interaction.gui import TrainWindow
@@ -62,8 +66,18 @@ class MainMenu(object):
         ob.add_destination(Destination("Sumptuna"))
         self.__trains[currentindex - 1].set_schedule(ob)
         a = TrainWindow(self.__trains[currentindex-1],self.__user,[0])
+        self.hide_window()
         a.display()
+        a.withdraw_root()
+        self.unhide_window()
+
         pass
+
+    def unhide_window(self):
+        self.__tk.deiconify()
+
+    def hide_window(self):
+        self.__tk.withdraw()
 
     def populate_train_table(self):
         index = 0

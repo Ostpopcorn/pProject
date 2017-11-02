@@ -7,26 +7,28 @@ from lib.train.seat import Walkway, SeatBookedError
 from lib.train.train import Train
 from lib.train.wagon import Wagon
 
+"""
 t = Train("X8000")
 t.add_wagon(Wagon(1, 6, 4))
 t.add_wagon(Wagon(2, 4, 5))
 t.add_wagon(Wagon(3, 2, 3))
-ob = Schedule() 
+ob = Schedule()
 ob.add_destination(Destination("Fjollträsk"))
 ob.add_destination(Destination("Mesberg"))
 ob.add_destination(Destination("Sumptuna"))
 t.set_schedule(ob)
-#a = Person("Sven")
-#b = Person("Sverker")
+# a = Person("Sven")
+# b = Person("Sverker")
 # t[0][0][0].book([0, 1], a)
 # t[0][0][0].book([0], a)
 # t[0][0][0].book([1], b)
 
 seat = t[0][0][0]
+"""
 
 
 class TrainWindow(object):
-    def __init__(self, train,user,schedule_index):
+    def __init__(self, train, user, schedule_index):
         self.__train = train
         self.__root = Tk()
         self.__root.geometry("1000x250")
@@ -49,7 +51,7 @@ class TrainWindow(object):
         train_frame = Frame(self.__root, pady=10, padx=10)
 
         for tindex in range(self.__train.wagons.__len__()):
-            wagon =self.__train[tindex]
+            wagon = self.__train[tindex]
 
             wagon_frame = Frame(train_frame, pady=10, padx=10)
             a = Label(train_frame, text=wagon.get_wagon_number())
@@ -81,20 +83,27 @@ class TrainWindow(object):
                                command=lambda: self.init_booking(), height=self.btn_height,
                                width=self.btn_width)
         self.btn_cancel = Button(main_frame, text="Cancel trip",
-                                 command=lambda: t.set_button_text(lambda x: x.get_seat_number()),
+                                 command=lambda: self.__train.set_button_text(lambda x: x.get_seat_number()),
                                  height=self.btn_height,
                                  width=self.btn_width)
         self.btn_get_ticket = Button(main_frame, text="Get yo tickets",
-                                     command=lambda: t.change_button_states("normal"), height=self.btn_height,
+                                     command=lambda: self.__train.change_button_states("normal"), height=self.btn_height,
                                      width=self.btn_width)
         self.btn_exit = Button(main_frame, text="Exit",
-                               command=lambda: main_frame.quit(), height=self.btn_height, width=self.btn_width)
+                               command=lambda: self.exit_window(), height=self.btn_height, width=self.btn_width)
         self.btn_book.pack()
         self.btn_cancel.pack()
         self.btn_get_ticket.pack()
         self.btn_exit.pack()
 
         main_frame.pack(side=LEFT)
+
+    def exit_window(self):
+        self.__root.quit()
+
+    def withdraw_root(self):
+        # self.__root.withdraw()
+        pass
 
     def exit_booking(self):
         self.btn_book["text"] = "Book Trip"
@@ -119,12 +128,12 @@ class TrainWindow(object):
         except SeatBookedError:
             print("Seat is already booked")
         # seat.set_button_text(lambda x:x.is_booked(stops))
-        t.update_buttons(stops, occupant)
+        self.__train.update_buttons(stops, occupant)
 
     def display(self):
         self.__root.mainloop()
 
-
+"""
 def main_menu():
     btn_height = 1
     btn_width = 15
@@ -189,8 +198,10 @@ def main_menu():
     t.change_button_states("disabled")
     main_root.mainloop()
 
+"""
+
 if __name__ == '__main__':
     print("HAHAHAHAHA")
     # main_menu()
-    ob = TrainWindow(t)
-    ob.display()
+    # ob = TrainWindow(t)
+    # ob.display()
