@@ -2,13 +2,17 @@ from lib.train.row import Row
 
 
 class Wagon(object):
-    def __init__(self, wagon_number, number_of_seats_per_row, number_of_rows, walkway_index=-1):
+    def __init__(self,parent, wagon_number, number_of_seats_per_row, number_of_rows, walkway_index=-1):
+        self.__parent = parent
         self.__wagon_number = wagon_number
-        self.seats_per_row = number_of_seats_per_row
+        self.__seats_per_row = number_of_seats_per_row
         self.rows = []
         for i in range(number_of_rows):
-            self.rows.append(Row(number_of_seats_per_row, walkway_index
+            self.rows.append(Row(self,number_of_seats_per_row, walkway_index
                                  , 1 + (number_of_seats_per_row * i)))
+
+    def get_parent(self):
+        return self.__parent
 
     def set_button_command(self,predicate):
         for i in self.rows:
@@ -37,7 +41,7 @@ class Wagon(object):
         return return_list
 
     def print_array_formatted(self,predicate):
-        return_list = [["|"] for _ in range(self.seats_per_row + 1)]
+        return_list = [["|"] for _ in range(self.__seats_per_row + 1)]
         for row_index in range(self.rows.__len__()):
             for seat_index in range(self.rows[row_index].__len__()):
                 from lib.train.seat import Walkway
@@ -45,7 +49,7 @@ class Wagon(object):
                     return_list[seat_index].append("{0:3}".format(""))
                     continue
                 return_list[seat_index].append("{0:3}".format(predicate(self.rows[row_index][seat_index])))
-        for i in range(self.seats_per_row + 1):
+        for i in range(self.__seats_per_row + 1):
             return_list[i] += "|"
 
         return_list.insert(0, " " + "-"* (self.rows.__len__()*3)+ " ")

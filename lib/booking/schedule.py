@@ -30,6 +30,12 @@ class Schedule(object):
                 # last loop
                 # print("k")
 
+    def get_destination_chain(self):
+        s = "{} - ".format(self.__destinations[0].name)
+        for i in range(1,len(self.__destinations)-1):
+            s += "{} - ".format(self.__destinations[i].name)
+        s += "{}".format(self.__destinations[len(self.__destinations)-1].name)
+        return  s
 
 class SeatSchedule(object):
     def __init__(self, wagon_schedule):
@@ -54,6 +60,13 @@ class SeatSchedule(object):
             print(self.master_schedule[i].name, self.master_schedule[i + 1].name)
             print("   ", self.__bookings[i])
 
+    def get_destination_chain(self):
+        s = "{} - ".format(self.master_schedule[0].start.name)
+        for i in range(len(self.master_schedule)-1):
+            s += "{} - ".format(self.master_schedule[i].destination.name)
+        s += "{}".format(self.master_schedule[len(self.master_schedule)-1].destination.name)
+        return  s
+
     def print_array_formatted(self):
         for i in range(self.master_schedule.number_of_stops()):
             print("#{1}: {0}".format(self.master_schedule[i].name, i + 1))
@@ -62,11 +75,20 @@ class SeatSchedule(object):
                 if not self.__bookings[i] is None:
                     print("  -Booked by: {0}".format(self.__bookings[i].occupant.name))
 
+    def get_occupant(self,schedule_index):
+        try:
+            return self.__bookings[schedule_index].occupant
+        except AttributeError:
+            return
+
+    def cancel_book(self, schedule_index):
+        self.__bookings[schedule_index] = None
+
     def get_bookings(self, occupant):
         bookings = []
         for booking in self.__bookings:
             if booking is None:
                 continue
-            if booking.occupant is occupant:
+            if booking.occupant.get_ID() == occupant.get_ID():
                 bookings.append(booking)
         return bookings

@@ -5,7 +5,7 @@ class MainMenu(object):
     def __init__(self):
         self.__user = None
         self.__tk = Tk()
-        self.__tk.geometry("100x250")
+        self.__tk.geometry("100x500")
         self.__trains = []
 
         a = Label(self.__tk, text="Boka tåg")
@@ -20,11 +20,21 @@ class MainMenu(object):
         self.__btn_view_train["state"] = "disabled"
         self.__btn_view_train.pack()
         self.__train_table = Listbox()
+        self.__train_table.bind('<<ListboxSelect>>', lambda x: self.update_user_info(self.__get_selected_train()))
         self.__train_table.pack()
+        self.__btn_user_info_train = Label(self.__tk, text="view train")
+        self.__btn_user_info_train.pack()
+
+    def update_user_info(self, train):
+        booking_for_user = train.get_bookings(self.__user)
+        if booking_for_user is None:
+            return
+        self.__btn_user_info_train["text"] = "Train: {0}\n{1}\n{3}\n{2}".format(train.name,train.schedule.get_destination_chain(),
+                                                              booking_for_user.destination_list(),"-"*30)
 
     def promt_login(self):
         from lib.occupant import Person
-        self.__set_user(Person(1234,"Sven"))
+        self.__set_user(Person(1234, "Sven"))
         return True
 
     def __logout_user(self):
@@ -47,25 +57,21 @@ class MainMenu(object):
             raise ValueError("Not of type Train")
         self.__trains.append(new_train)
 
-    def view_selected_train(self):
-        print("hej")
+    def __get_selected_train(self):
         try:
-            currentindex = (int(self.__train_table.get(self.__train_table.curselection()[0])[1:3]))
+            return self.__trains[(int(self.__train_table.get(self.__train_table.curselection()[0])[1:3])) - 1]
         except IndexError:
             print("Non selected")
             return
-        print(int(self.__train_table.get(self.__train_table.curselection()[0])[1:3]))
+
+    def view_selected_train(self):
+        print("hej")
+        current_train = self.__get_selected_train()
+        # print(int(self.__train_table.get(self.__trains[self.__get_selected_train_index()][0])[1:3]))
 
         from lib.interaction.gui import TrainWindow
 
-        from lib.booking.schedule import Schedule
-        ob = Schedule()
-        from lib.booking.destination import Destination
-        ob.add_destination(Destination("Fjollträsk"))
-        ob.add_destination(Destination("Mesberg"))
-        ob.add_destination(Destination("Sumptuna"))
-        self.__trains[currentindex - 1].set_schedule(ob)
-        a = TrainWindow(self.__trains[currentindex-1],self.__user,[0])
+        a = TrainWindow(current_train, self.__user, [0, 1])
         self.hide_window()
         a.display()
         a.withdraw_root()
@@ -93,10 +99,24 @@ if __name__ == '__main__':
     from lib.train.train import Train
     from lib.train.wagon import Wagon
 
+    from lib.booking.schedule import Schedule
+
+    ob = Schedule()
+    from lib.booking.destination import Destination
+
+    ob.add_destination(Destination("Fjollträsk"))
+    ob.add_destination(Destination("Mesberg"))
+    ob.add_destination(Destination("Sumptuna"))
+
     t1 = Train("X123")
-    t1.add_wagon(Wagon(1, 4, 5))
+    t1.add_wagon(Wagon(t1, 1, 4, 5))
+
     t2 = Train("Y321")
-    t2.add_wagon(Wagon(1, 2, 6))
+    t2.add_wagon(Wagon(t2, 1, 2, 6))
+
+    t1.set_schedule(ob)
+    t2.set_schedule(ob)
+
     ob = MainMenu()
     ob.add_train(t1)
     ob.add_train(t2)

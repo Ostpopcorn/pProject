@@ -1,31 +1,75 @@
 class TicketPart(object):
-    def __init__(self, a, b, occupant):
+    def __init__(self, a, b, occupant, train=-1, wagon=-1, seat=-1):
         self.occupant = occupant
         self.destination = b
         self.start = a
+        self.train = train
+        self.seat = seat
+        self.wagon = wagon
 
     def print_array(self):
         a = [self.start.name, self.destination.name, self.occupant.full_name()]
         return a
 
+    def formatted_string(self, include_traveler=True):
+        sreturn = "{0} to {1}".format(self.start.name, self.destination.name)
+        if include_traveler:
+            sreturn += ". {0} as traveler".format(self.occupant.full_name())
+        return sreturn
+
     def __str__(self):
-        return "{0} to {1}. {2} as traveler".format(self.start.name, self.destination.name, self.occupant.full_name())
+        return self.formatted_string()
+
+
+class SeatTicket(object):
+    def __init__(self, seat):
+        self.__train_name = seat.get_parent().get_parent().get_parent().name
+        self.__wagon_number = seat.get_parent().get_parent().get_wagon_number()
+        self.__seat_number = seat.get_seat_number()
+        self.__ticket_parts = []
+
+    def add_ticket_part(self, ticket_part):
+        if not isinstance(ticket_part, TicketPart):
+            raise ValueError("Not a ticket_part")
+        self.__ticket_parts.append(ticket_part)
+
+    def __last_ticket_part(self):
+        return self.__ticket_parts[self.__ticket_parts.__len__()-1]
+
+    def __get_destination_chain(self):
+        s = "{} - ".format(self.__ticket_parts[0].start.name)
+        for i in range(len(self.__ticket_parts)-1):
+            s += "{} - ".format(self.__ticket_parts[i].destination.name)
+        s += "{}".format(self.__ticket_parts[len(self.__ticket_parts)-1].destination.name)
+        return  s
+    def mini_display_format(self):
+        return "Wagon: {0}. Seat:{1}. \n{2}\n".format(self.__wagon_number, self.__seat_number,
+                                                        self.__get_destination_chain())
 
 
 class CompleteTicket(object):
     def __init__(self, ticket_parts):
-        self.tickets = ticket_parts
+        self.__tickets = ticket_parts
+
+    def destination_list(self):
+        rstring = ""
+        for i in self.__tickets:
+            rstring += i.mini_display_format() + "\n"
+        return rstring
 
     def print_formatted(self):
         number_of_dashes = 10
         print("-" * number_of_dashes)
         print("Ticket: ")
-        for i in self.tickets:
+        for i in self.__tickets:
             print(str(i))
         print("-" * number_of_dashes)
 
     def __str__(self):
         rstring = ""
-        for i in self.tickets:
+        for i in self.__tickets:
             rstring += str(i) + "\n"
         return rstring
+
+    def __len__(self):
+        return self.__tickets.__len__()

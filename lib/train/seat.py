@@ -3,14 +3,18 @@ from lib.booking.schedule import SeatSchedule
 
 class SeatBookedError(Exception):
     def __init__(self, text):
-        Exception.__init__(self,text)
+        Exception.__init__(self, text)
 
 
 class Seat(object):
-    def __init__(self, seat_number):
+    def __init__(self, parent, seat_number):
+        self.__parent = parent
         self.__seat_number = seat_number
         self.__schedule = None
         self.__button = None
+
+    def get_parent(self):
+        return self.__parent
 
     def set_button_command(self, predicate):
         self.__button["command"] = lambda: predicate(self)
@@ -62,19 +66,27 @@ class Seat(object):
 
         for index in schedule_index:
             if isinstance(index, int):
-                if self.is_booked(schedule_index):
-
-                    if self.__schedule.get_bookings(occupant).__len__() <= 0:
+                if self.is_booked(index):
+                    if self.__schedule.get_occupant(index).get_ID() == occupant.get_ID():
+                        self.__schedule.cancel_book(index)
+                    else:  # self.__schedule.get_bookings(occupant).__len__() <= 0:
                         raise SeatBookedError("Seat is already booked")
                 else:
-                    self.update_button(schedule_index, occupant)
                     self.__schedule.book(index, occupant)
             else:
                 raise TypeError("expected int for index.")
+        self.update_button(schedule_index, occupant)
 
     def get_bookings(self, occupant):
 
-        return self.__schedule.get_bookings(occupant)
+        ticket_parts = self.__schedule.get_bookings(occupant)
+        if ticket_parts.__len__() <= 0:
+            return
+        from lib.booking.TicketPart import SeatTicket
+        ticket = SeatTicket(self)
+        for i in ticket_parts:
+            ticket.add_ticket_part(i)
+        return ticket
 
     def print_formatted(self):
         print("Seat: {0}".format(self.get_seat_number()))
@@ -82,12 +94,11 @@ class Seat(object):
 
 
 class Walkway(Seat):
-    def __init__(self):
-        super(Walkway, self).__init__(-1)
+    def __init__(self, parent):
+        super(Walkway, self).__init__(parent, -1)
 
     def is_booked(self, schedule_index):
         return False
 
     def get_bookings(self, occupant):
         return False
-

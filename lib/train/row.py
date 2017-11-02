@@ -2,8 +2,9 @@ from lib.train.seat import Seat, Walkway
 
 
 class Row(object):
-    def __init__(self, number_of_seats, walkway_index=-1, start_number=1):
-        self.__seats = [Seat(start_number + i) for i in range(number_of_seats)]
+    def __init__(self,parent, number_of_seats, walkway_index=-1, start_number=1):
+        self.__parent = parent
+        self.__seats = [Seat(self, start_number + i) for i in range(number_of_seats)]
         if walkway_index == -1:
             walkway_index = number_of_seats // 2
         else:
@@ -11,6 +12,8 @@ class Row(object):
                 raise IndexError("walkway is outside the row")
         self.walkway_index = walkway_index
 
+    def get_parent(self):
+        return self.__parent
 
     def set_button_text(self,predicate):
         for i in self.__seats:
@@ -46,7 +49,7 @@ class Row(object):
 
     def __getitem__(self, item):
         if item == self.walkway_index:
-            return Walkway()
+            return Walkway(self)
         if item > self.walkway_index:
             return self.__seats[item - 1]
         return self.__seats[item]
@@ -54,7 +57,9 @@ class Row(object):
     def get_bookings(self, occupant):
         bookings = []
         for seat in self.__seats:
-            bookings.extend(seat.get_bookings(occupant))
+            templist = seat.get_bookings(occupant)
+            if templist is not None:
+                bookings.append(templist)
         return bookings
 
 

@@ -8,6 +8,9 @@ class Train(object):
         self.schedule = None
         self.name = train_name
 
+    def add_wagon_by_numbers(self):
+        pass
+
     def set_button_command(self,predicate):
         for i in self.wagons:
             i.set_button_command(predicate)
@@ -36,6 +39,8 @@ class Train(object):
         bookings = []
         for wagon in self.wagons:
             bookings.extend(wagon.get_bookings(occupant))
+        if len(bookings) <= 0:
+            return
         ticket = CompleteTicket(bookings)
         return ticket
 
