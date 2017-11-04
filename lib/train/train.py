@@ -3,15 +3,26 @@ from lib.train.seat import Walkway
 
 
 class Train(object):
+    @classmethod
+    def read_from_file(cls, file):
+
+        pass
+
+    def get_as_element(self):
+        import xml.etree.cElementTree as et
+        train = et.Element("train", attrib={"name": self.name})
+        train.append(self.schedule.get_as_element())
+        w = et.SubElement(train,"wagons")
+        for wagon in self.wagons:
+            w.append(wagon.get_as_element())
+        return train
+
     def __init__(self, train_name):
         self.wagons = []
         self.schedule = None
         self.name = train_name
 
-    def add_wagon_by_numbers(self):
-        pass
-
-    def set_button_command(self,predicate):
+    def set_button_command(self, predicate):
         for i in self.wagons:
             i.set_button_command(predicate)
 
@@ -23,9 +34,9 @@ class Train(object):
         for i in self.wagons:
             i.change_button_states(state)
 
-    def update_buttons(self, schedule_index,occupant):
+    def update_buttons(self, schedule_index, occupant):
         for i in self.wagons:
-            i.update_buttons(schedule_index,occupant)
+            i.update_buttons(schedule_index, occupant)
 
     def add_wagon(self, wagon):
         self.wagons.append(wagon)
@@ -44,7 +55,7 @@ class Train(object):
         ticket = CompleteTicket(bookings)
         return ticket
 
-    def print_nice_2(self, predicate, horizontal=True):
+    def print_nice_2(self, predicate):
         wagons = []
         print("Train: {0}".format(self.name))
         for wagon in self.wagons:

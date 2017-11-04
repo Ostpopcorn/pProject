@@ -3,6 +3,15 @@ from lib.booking.destination import Destination
 
 
 class Schedule(object):
+
+    def get_as_element(self):
+        import xml.etree.cElementTree as et
+        a = et.Element("schedule")
+        for seat in self.__destinations:
+            a.append(seat.get_as_element())
+        pass
+        return a
+
     def __init__(self):
         self.__destinations = []
 
@@ -32,12 +41,27 @@ class Schedule(object):
 
     def get_destination_chain(self):
         s = "{} - ".format(self.__destinations[0].name)
-        for i in range(1,len(self.__destinations)-1):
+        for i in range(1, len(self.__destinations) - 1):
             s += "{} - ".format(self.__destinations[i].name)
-        s += "{}".format(self.__destinations[len(self.__destinations)-1].name)
-        return  s
+        s += "{}".format(self.__destinations[len(self.__destinations) - 1].name)
+        return s
+
 
 class SeatSchedule(object):
+    def has_any_booking(self):
+        for i in self.__bookings:
+            if i is not None:
+                return  True
+        return False
+
+    def get_as_element(self):
+        import xml.etree.cElementTree as et
+        a = et.Element("schedule")
+        for book in self.__bookings:
+            if book is not None:
+                a.append(book.get_as_element())
+        return a
+
     def __init__(self, wagon_schedule):
         self.master_schedule = wagon_schedule
         self.__bookings = [None for _ in range(self.master_schedule.number_of_stops() - 1)]
@@ -62,10 +86,10 @@ class SeatSchedule(object):
 
     def get_destination_chain(self):
         s = "{} - ".format(self.master_schedule[0].start.name)
-        for i in range(len(self.master_schedule)-1):
+        for i in range(len(self.master_schedule) - 1):
             s += "{} - ".format(self.master_schedule[i].destination.name)
-        s += "{}".format(self.master_schedule[len(self.master_schedule)-1].destination.name)
-        return  s
+        s += "{}".format(self.master_schedule[len(self.master_schedule) - 1].destination.name)
+        return s
 
     def print_array_formatted(self):
         for i in range(self.master_schedule.number_of_stops()):
@@ -75,7 +99,7 @@ class SeatSchedule(object):
                 if not self.__bookings[i] is None:
                     print("  -Booked by: {0}".format(self.__bookings[i].occupant.name))
 
-    def get_occupant(self,schedule_index):
+    def get_occupant(self, schedule_index):
         try:
             return self.__bookings[schedule_index].occupant
         except AttributeError:

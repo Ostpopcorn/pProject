@@ -13,6 +13,13 @@ class Seat(object):
         self.__schedule = None
         self.__button = None
 
+    def get_as_element(self):
+        import xml.etree.cElementTree as et
+        a = et.Element("seat", attrib={"number": str(self.__seat_number)  })
+        if self.__schedule.has_any_booking():
+            a.append(self.__schedule.get_as_element())
+        return a
+
     def get_parent(self):
         return self.__parent
 
@@ -35,6 +42,8 @@ class Seat(object):
         return self.__seat_number
 
     def update_button(self, schedule_index, occupant):
+        if self.__button is None:
+            return
         if not isinstance(schedule_index, list):
             schedule_index = [schedule_index]
         if not self.is_booked(schedule_index):

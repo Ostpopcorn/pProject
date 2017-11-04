@@ -2,6 +2,14 @@ from lib.train.row import Row
 
 
 class Wagon(object):
+    def get_as_element(self):
+        import xml.etree.cElementTree as et
+        a = et.Element("wagon", attrib={"name": str(self.__wagon_number)  })
+        for row in self.rows:
+            a.append(row.get_as_element())
+        pass
+        return a
+
     def __init__(self,parent, wagon_number, number_of_seats_per_row, number_of_rows, walkway_index=-1):
         self.__parent = parent
         self.__wagon_number = wagon_number
@@ -9,7 +17,7 @@ class Wagon(object):
         self.rows = []
         for i in range(number_of_rows):
             self.rows.append(Row(self,number_of_seats_per_row, walkway_index
-                                 , 1 + (number_of_seats_per_row * i)))
+                                 , 1 + (number_of_seats_per_row * i),i))
 
     def get_parent(self):
         return self.__parent

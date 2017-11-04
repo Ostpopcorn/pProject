@@ -1,4 +1,7 @@
 from tkinter import *
+from xml.etree.ElementTree import ElementTree
+
+import os
 
 
 class MainMenu(object):
@@ -26,11 +29,13 @@ class MainMenu(object):
         self.__btn_user_info_train.pack()
 
     def update_user_info(self, train):
+        text_to_seat = "Train: {0}\n{1}\n{2}".format(train.name, train.schedule.get_destination_chain(), "-" * 30)
         booking_for_user = train.get_bookings(self.__user)
-        if booking_for_user is None:
-            return
-        self.__btn_user_info_train["text"] = "Train: {0}\n{1}\n{3}\n{2}".format(train.name,train.schedule.get_destination_chain(),
-                                                              booking_for_user.destination_list(),"-"*30)
+        if booking_for_user is not None:
+            text_to_seat += "\n" + booking_for_user.destination_list()
+        self.__btn_user_info_train[
+            "text"] = text_to_seat  # "Train: {0}\n{1}\n{3}\n{2}".format(train.name,train.schedule.get_destination_chain(),
+        #   booking_for_user.destination_list(),"-"*30)
 
     def promt_login(self):
         from lib.occupant import Person
@@ -74,7 +79,7 @@ class MainMenu(object):
         a = TrainWindow(current_train, self.__user, [0, 1])
         self.hide_window()
         a.display()
-        a.withdraw_root()
+        a.exit_window()#withdraw_root()
         self.unhide_window()
 
         pass
@@ -114,11 +119,20 @@ if __name__ == '__main__':
     t2 = Train("Y321")
     t2.add_wagon(Wagon(t2, 1, 2, 6))
 
+
+
+    # a_path = os.path.abspath(os.path.join("a.xml"))
+    # a = ElementTree()
+    # a.write(a_path)
+    #  file = open("../train/train_1.txt", "r", encoding="utf8")
+    # t3 = Train.read_from_file(file)
+    # file.close()
     t1.set_schedule(ob)
     t2.set_schedule(ob)
 
     ob = MainMenu()
     ob.add_train(t1)
     ob.add_train(t2)
+   # ob.add_train(t3)
     ob.populate_train_table()
     ob.start_ui()

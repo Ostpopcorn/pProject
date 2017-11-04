@@ -1,4 +1,16 @@
 class TicketPart(object):
+    def get_as_element(self):
+        import xml.etree.cElementTree as et
+        a = et.Element("ticketpart")
+        s = self.start.get_as_element()
+        e = self.destination.get_as_element()
+        t = et.SubElement(a,"start")
+        t.append(s)
+        t = et.SubElement(a,"end")
+        t.append(e)
+        a.append(self.occupant.get_as_element())
+        return a
+
     def __init__(self, a, b, occupant, train=-1, wagon=-1, seat=-1):
         self.occupant = occupant
         self.destination = b
@@ -34,17 +46,18 @@ class SeatTicket(object):
         self.__ticket_parts.append(ticket_part)
 
     def __last_ticket_part(self):
-        return self.__ticket_parts[self.__ticket_parts.__len__()-1]
+        return self.__ticket_parts[self.__ticket_parts.__len__() - 1]
 
     def __get_destination_chain(self):
         s = "{} - ".format(self.__ticket_parts[0].start.name)
-        for i in range(len(self.__ticket_parts)-1):
+        for i in range(len(self.__ticket_parts) - 1):
             s += "{} - ".format(self.__ticket_parts[i].destination.name)
-        s += "{}".format(self.__ticket_parts[len(self.__ticket_parts)-1].destination.name)
-        return  s
+        s += "{}".format(self.__ticket_parts[len(self.__ticket_parts) - 1].destination.name)
+        return s
+
     def mini_display_format(self):
         return "Wagon: {0}. Seat:{1}. \n{2}\n".format(self.__wagon_number, self.__seat_number,
-                                                        self.__get_destination_chain())
+                                                      self.__get_destination_chain())
 
 
 class CompleteTicket(object):

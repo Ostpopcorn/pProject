@@ -2,7 +2,17 @@ from lib.train.seat import Seat, Walkway
 
 
 class Row(object):
-    def __init__(self,parent, number_of_seats, walkway_index=-1, start_number=1):
+
+    def get_as_element(self):
+        import xml.etree.cElementTree as et
+        a = et.Element("row", attrib={"name": str(self.__index)  })
+        for seat in self.__seats:
+            a.append(seat.get_as_element())
+        pass
+        return a
+
+    def __init__(self,parent, number_of_seats, walkway_index=-1, start_number=1, index = -1):
+        self.__index = index
         self.__parent = parent
         self.__seats = [Seat(self, start_number + i) for i in range(number_of_seats)]
         if walkway_index == -1:
