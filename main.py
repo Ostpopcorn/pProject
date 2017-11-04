@@ -19,8 +19,13 @@ if __name__ == '__main__':
     # w = Wagon(1, 4, 5)
     # w.print()
     t = Train("X4000")
-    t.add_wagon(Wagon(t,1, 4, 5))
-    t.add_wagon(Wagon(t,2, 4, 10))
+    w = Wagon.generate(1, 4, 5)
+    w.set_parent(t)
+    t.add_wagon(w)
+    w = Wagon.generate(2, 4, 10)
+    w.set_parent(t)
+    t.add_wagon(w)
+
     t.set_schedule(ob)
 
     b = Person(1234, "Sverker")
@@ -30,8 +35,14 @@ if __name__ == '__main__':
     root = et.Element("root")
     e = et.ElementTree(root)
     root.append(t.get_as_element())
-    #nw = et.SubElement(root,"train",attrib={"name":"X8000"})
     e.write(a_path)
+    #e = et.parse(a_path)
+
+    for i in e.getroot():
+        a = Train.read_from_file(i)
+    from lib.interaction.gui import TrainWindow
+    tw =TrainWindow(a,Person(12345,"sven"),[0])
+    tw.display()
     # t.print_nice_2()
     # a = Person("Sven")
     # b = Person("Sverker")

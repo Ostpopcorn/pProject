@@ -7,8 +7,16 @@ class SeatBookedError(Exception):
 
 
 class Seat(object):
-    def __init__(self, parent, seat_number):
-        self.__parent = parent
+    @classmethod
+    def read_from_file(cls, et,train):
+        s = Seat(et.attrib["number"])
+
+        s.set_schedule_dirty(SeatSchedule.read_from_file(et,train.schedule))
+
+        return  s
+
+    def __init__(self, seat_number):
+        self.__parent = None
         self.__seat_number = seat_number
         self.__schedule = None
         self.__button = None
@@ -19,6 +27,12 @@ class Seat(object):
         if self.__schedule.has_any_booking():
             a.append(self.__schedule.get_as_element())
         return a
+
+    def set_parent(self, item):
+        if self.__parent is None:
+            self.__parent = item
+            return
+        raise AttributeError("Parent is already set")
 
     def get_parent(self):
         return self.__parent
@@ -62,6 +76,9 @@ class Seat(object):
     def set_schedule(self, schedule):
         self.__schedule = SeatSchedule(schedule)
 
+    def set_schedule_dirty(self, schedule):
+        self.__schedule = schedule
+
     def is_booked(self, schedule_index):
 
         return self.get_schedule.is_booked(schedule_index)
@@ -103,8 +120,9 @@ class Seat(object):
 
 
 class Walkway(Seat):
-    def __init__(self, parent):
-        super(Walkway, self).__init__(parent, -1)
+    def __init__(self,parent):
+        super(Walkway, self).__init__(-1)
+        self.set_parent(parent)
 
     def is_booked(self, schedule_index):
         return False

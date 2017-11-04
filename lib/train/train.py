@@ -4,9 +4,15 @@ from lib.train.seat import Walkway
 
 class Train(object):
     @classmethod
-    def read_from_file(cls, file):
-
-        pass
+    def read_from_file(cls, et):
+        t = Train(et.attrib["name"])
+        from lib.booking.schedule import Schedule
+        t.set_schedule(Schedule.read_from_file(et))
+        from lib.train.wagon import Wagon
+        for i in et.find("wagons"):
+            w =Wagon.read_from_file(i,t)
+            t.add_wagon(w)
+        return t
 
     def get_as_element(self):
         import xml.etree.cElementTree as et

@@ -3,6 +3,13 @@ from lib.booking.destination import Destination
 
 
 class Schedule(object):
+    @classmethod
+    def read_from_file(cls, et):
+        s = Schedule()
+        for d in et.find("schedule").findall("Destination"):
+            ds = Destination(d.attrib["name"])
+            s.add_destination(ds)
+        return s
 
     def get_as_element(self):
         import xml.etree.cElementTree as et
@@ -48,11 +55,34 @@ class Schedule(object):
 
 
 class SeatSchedule(object):
+    @classmethod
+    def read_from_file(cls, et, par_sch):
+        s = SeatSchedule(par_sch)
+        arr = []
+        b = et.find("schedule")
+        if b is None:
+            return SeatSchedule(par_sch)
+        for i in b.findall("ticketpart"):
+            a = i.find("occupant").attrib
+            from lib.occupant import Person
+            d = TicketPart(
+                i.find("start").find("Destination").attrib["name"],
+                i.find("end").find("Destination").attrib["name"],
+                Person(a["id"], a["name"]))
+
+
+            arr.append(d)
+        s.set_all_bookings(arr)
+        return s
+
     def has_any_booking(self):
         for i in self.__bookings:
             if i is not None:
-                return  True
+                return True
         return False
+
+    def set_all_bookings(self,bookings):
+        self.__bookings = bookings
 
     def get_as_element(self):
         import xml.etree.cElementTree as et
@@ -60,6 +90,8 @@ class SeatSchedule(object):
         for book in self.__bookings:
             if book is not None:
                 a.append(book.get_as_element())
+            else:
+                a.append(et.Element("ticketpart"))
         return a
 
     def __init__(self, wagon_schedule):
