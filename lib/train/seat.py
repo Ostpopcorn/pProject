@@ -11,7 +11,7 @@ class Seat(object):
     def read_from_file(cls, et,train):
         s = Seat(et.attrib["number"])
 
-        s.set_schedule_dirty(SeatSchedule.read_from_file(et,train.schedule))
+        s.__schedule= SeatSchedule.read_from_file(et,train.schedule)
 
         return  s
 
@@ -75,9 +75,6 @@ class Seat(object):
 
     def set_schedule(self, schedule):
         self.__schedule = SeatSchedule(schedule)
-
-    def set_schedule_dirty(self, schedule):
-        self.__schedule = schedule
 
     def is_booked(self, schedule_index):
 

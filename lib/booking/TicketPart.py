@@ -1,11 +1,29 @@
 class TicketPart(object):
+    @classmethod
+    def read_from_file(cls,et):
+        try:
+            s = et.find("start").find("Destination")
+            e =et.find("end").find("Destination")
+            a = et.find("occupant").attrib
+        except AttributeError:
+            return
+
+        from lib.occupant import Person
+        from lib.booking.destination import Destination
+        return TicketPart(Destination.read_from_file(s)
+                          ,Destination.read_from_file(e)
+                          , Person(int(a["id"]), a["name"]))
+
+
     def get_as_element(self):
         import xml.etree.cElementTree as et
         a = et.Element("ticketpart")
         s = self.start.get_as_element()
         e = self.destination.get_as_element()
+
         t = et.SubElement(a,"start")
         t.append(s)
+
         t = et.SubElement(a,"end")
         t.append(e)
         a.append(self.occupant.get_as_element())

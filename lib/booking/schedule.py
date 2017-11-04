@@ -62,17 +62,10 @@ class SeatSchedule(object):
         b = et.find("schedule")
         if b is None:
             return SeatSchedule(par_sch)
+
         for i in b.findall("ticketpart"):
-            a = i.find("occupant").attrib
-            from lib.occupant import Person
-            d = TicketPart(
-                i.find("start").find("Destination").attrib["name"],
-                i.find("end").find("Destination").attrib["name"],
-                Person(a["id"], a["name"]))
-
-
-            arr.append(d)
-        s.set_all_bookings(arr)
+            arr.append(TicketPart.read_from_file(i))
+        s.__bookings = arr
         return s
 
     def has_any_booking(self):
@@ -80,9 +73,6 @@ class SeatSchedule(object):
             if i is not None:
                 return True
         return False
-
-    def set_all_bookings(self,bookings):
-        self.__bookings = bookings
 
     def get_as_element(self):
         import xml.etree.cElementTree as et

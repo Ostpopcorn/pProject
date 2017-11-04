@@ -34,15 +34,21 @@ if __name__ == '__main__':
     a_path = os.path.abspath(os.path.join("lib", "storage", "a.xml"))
     root = et.Element("root")
     e = et.ElementTree(root)
-    root.append(t.get_as_element())
-    e.write(a_path)
+    #root.append(t.get_as_element())
+    # e.write(a_path)
     #e = et.parse(a_path)
-
-    for i in e.getroot():
+    f = et.parse(a_path)
+    for i in f.getroot():
         a = Train.read_from_file(i)
     from lib.interaction.gui import TrainWindow
-    tw =TrainWindow(a,Person(12345,"sven"),[0])
+
+    tw =TrainWindow(a,Person(1234,"sven"),[0])
     tw.display()
+    root2 = et.Element("root")
+    root2.append(a.get_as_element())
+    f = et.ElementTree(root2)
+    root2.append(a.get_as_element())
+    f.write(a_path)
     # t.print_nice_2()
     # a = Person("Sven")
     # b = Person("Sverker")

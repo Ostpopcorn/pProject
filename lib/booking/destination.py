@@ -1,4 +1,10 @@
 class Destination(object):
+    @classmethod
+    def read_from_file(cls,et):
+        b = et.find("Destination")
+        a = Destination(et.attrib["name"])
+        return a
+
     def __init__(self, place_name):
         self.name = place_name
 
