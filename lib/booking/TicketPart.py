@@ -82,6 +82,12 @@ class CompleteTicket(object):
     def __init__(self, ticket_parts):
         self.__tickets = ticket_parts
 
+    def get_file_string(self):
+        a_string = ""
+        for i in self.__tickets:
+            a_string += i.mini_display_format()
+        return a_string
+
     def destination_list(self):
         rstring = ""
         for i in self.__tickets:

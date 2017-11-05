@@ -132,6 +132,8 @@ class SeatSchedule(object):
 
     def get_bookings(self, occupant):
         bookings = []
+        if occupant is None:
+            return bookings
         for booking in self.__bookings:
             if booking is None:
                 continue

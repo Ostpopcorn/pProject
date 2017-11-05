@@ -7,6 +7,7 @@ class Wagon(object):
         w = Wagon(int(et.attrib["name"]))
         for i in et.findall("row"):
             r = Row.read_from_file(i,train)
+            r.set_parent(w)
             w.add_row(r)
 
         return w

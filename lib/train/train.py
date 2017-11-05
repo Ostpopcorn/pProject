@@ -11,6 +11,7 @@ class Train(object):
         from lib.train.wagon import Wagon
         for i in et.find("wagons"):
             w =Wagon.read_from_file(i,t)
+            w.set_parent(t)
             t.add_wagon(w)
         return t
 

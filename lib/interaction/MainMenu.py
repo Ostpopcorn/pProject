@@ -15,6 +15,10 @@ class MainMenu(object):
         a.pack()
         a = Frame(self.__tk)
         a.pack(pady=10)
+
+        self.__btn_get_ticket = Button(self.__tk, text="Get yo tickets",
+                                       command=lambda: self.print_ticket())
+
         self.__user_label = Label(a, text="No user")
         self.__btn_login = Button(a, text="Login", command=lambda: self.promt_login())
         self.__user_label.pack(side=LEFT)
@@ -25,6 +29,7 @@ class MainMenu(object):
         self.__train_table = Listbox()
         self.__train_table.bind('<<ListboxSelect>>', lambda x: self.update_user_info(self.__get_selected_train()))
         self.__train_table.pack()
+        self.__btn_get_ticket.pack()
         self.__btn_user_info_train = Label(self.__tk, text="view train")
         self.__btn_user_info_train.pack()
 
@@ -37,9 +42,27 @@ class MainMenu(object):
             "text"] = text_to_seat  # "Train: {0}\n{1}\n{3}\n{2}".format(train.name,train.schedule.get_destination_chain(),
         #   booking_for_user.destination_list(),"-"*30)
 
+    def print_ticket(self):
+        if self.__user is None:
+            return
+        a = self.__user
+
+        file = open("{}_{}_{}".format(a.get_ID(), a.name, "ticket.txt"), "w", encoding="utf-8")
+        file.write("Train bookings for: \n{1} ( ID: {0})\n".format(a.get_ID(),a.name))
+        for i in self.__trains:
+            bookings = i.get_bookings(a)
+            if bookings is not None:
+                file.write("\nTrain: {}\n".format(i.name))
+                file.write(bookings.get_file_string())
+        file.close()
+
     def promt_login(self):
         from lib.occupant import Person
-        self.__set_user(Person(1234, "Sven"))
+        self.__set_user(Person(12345, "Sven"))
+        t = self.__get_selected_train()
+        if t is None:
+            return
+        self.update_user_info(t)
         return True
 
     def __logout_user(self):
@@ -47,6 +70,10 @@ class MainMenu(object):
         self.__btn_login["command"] = lambda: self.promt_login()
         self.__user = None
         self.__btn_view_train["state"] = "disabled"
+        t = self.__get_selected_train()
+        if t is None:
+            return
+        self.update_user_info(t)
 
     def __set_user(self, user):
         from lib.occupant import Occupant
@@ -58,6 +85,7 @@ class MainMenu(object):
         self.__btn_view_train["state"] = "normal"
 
     def add_train(self, new_train):
+        from lib.train.train import Train
         if not isinstance(new_train, Train):
             raise ValueError("Not of type Train")
         self.__trains.append(new_train)
@@ -79,7 +107,7 @@ class MainMenu(object):
         a = TrainWindow(current_train, self.__user, [0, 1])
         self.hide_window()
         a.display()
-        a.exit_window()#withdraw_root()
+        a.exit_window()  # withdraw_root()
         self.unhide_window()
 
         pass
@@ -97,7 +125,11 @@ class MainMenu(object):
             self.__train_table.insert(10, "#{1:2} {0}".format(train.train_table_display(), index))
 
     def start_ui(self):
+        self.populate_train_table()
         self.__tk.mainloop()
+
+    def get_trains(self):
+        return self.__trains
 
 
 if __name__ == '__main__':
@@ -119,8 +151,6 @@ if __name__ == '__main__':
     t2 = Train("Y321")
     t2.add_wagon(Wagon(t2, 1, 2, 6))
 
-
-
     # a_path = os.path.abspath(os.path.join("a.xml"))
     # a = ElementTree()
     # a.write(a_path)
@@ -133,6 +163,5 @@ if __name__ == '__main__':
     ob = MainMenu()
     ob.add_train(t1)
     ob.add_train(t2)
-   # ob.add_train(t3)
-    ob.populate_train_table()
+    # ob.add_train(t3)
     ob.start_ui()
