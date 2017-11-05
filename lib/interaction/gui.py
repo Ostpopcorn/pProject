@@ -32,7 +32,7 @@ class TrainWindow(object):
     def create_train_buttons(self):
         train_frame = Frame(self.__root, pady=10, padx=10)
 
-        for tindex in range(self.__train.wagons.__len__()):
+        for tindex in range(self.__train.get_wagons().__len__()):
             wagon = self.__train[tindex]
 
             wagon_frame = Frame(train_frame, pady=10, padx=10)

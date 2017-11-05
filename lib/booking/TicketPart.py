@@ -53,7 +53,7 @@ class TicketPart(object):
 
 class SeatTicket(object):
     def __init__(self, seat):
-        self.__train_name = seat.get_parent().get_parent().get_parent().name
+        self.__train_name = seat.get_parent().get_parent().get_parent().get_name()
         self.__wagon_number = seat.get_parent().get_parent().get_wagon_number()
         self.__seat_number = seat.get_seat_number()
         self.__ticket_parts = []

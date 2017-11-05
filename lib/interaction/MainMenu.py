@@ -34,7 +34,7 @@ class MainMenu(object):
         self.__btn_user_info_train.pack()
 
     def update_user_info(self, train):
-        text_to_seat = "Train: {0}\n{1}\n{2}".format(train.name, train.schedule.get_destination_chain(), "-" * 30)
+        text_to_seat = "Train: {0}\n{1}\n{2}".format(train.get_name(), train.get_schedule().get_destination_chain(), "-" * 30)
         booking_for_user = train.get_bookings(self.__user)
         if booking_for_user is not None:
             text_to_seat += "\n" + booking_for_user.destination_list()
@@ -52,7 +52,7 @@ class MainMenu(object):
         for i in self.__trains:
             bookings = i.get_bookings(a)
             if bookings is not None:
-                file.write("\nTrain: {}\n".format(i.name))
+                file.write("\nTrain: {}\n".format(i.get_name()))
                 file.write(bookings.get_file_string())
         file.close()
 

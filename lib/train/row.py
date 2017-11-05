@@ -2,8 +2,10 @@ from lib.train.seat import Seat, Walkway
 
 
 class Row(object):
+    """Contains a array of seats. Functions mostly as a list with special functions"""
     @classmethod
     def read_from_file(cls, et,train):
+        """This is for the recreation of a train from xml format."""
         r = Row(int(et.attrib["name"]))
         r.__walkway_index = int(et.attrib["walkway_index"])
         for i in et.findall("seat"):
@@ -14,6 +16,7 @@ class Row(object):
 
     @classmethod
     def generate(cls, parent, number_of_seats, walkway_index=-1, start_number=1, index=-1):
+        """Generates a fresh Wagon based on numbers"""
         r = Row(index)
         r.set_parent(parent)
         for i in range(number_of_seats):
@@ -33,6 +36,8 @@ class Row(object):
         self.__seats.append(seat)
 
     def get_as_element(self):
+        """Is used for getting the train in xml.etree.ElementTree format.
+        First sets it own attrib and the run corresponding in all seats"""
         import xml.etree.cElementTree as et
         a = et.Element("row", attrib={"name": str(self.__index),
                                       "walkway_index": str(self.__walkway_index)})
@@ -47,16 +52,6 @@ class Row(object):
             return
         raise ValueError("walkway_index already set")
 
-    # def __init__(self, parent, number_of_seats, walkway_index=-1, start_number=1, index=-1):
-    #     self.__index = index
-    #     self.__parent = parent
-    #     self.__seats = [Seat(self, start_number + i) for i in range(number_of_seats)]
-    #     if walkway_index == -1:
-    #         walkway_index = number_of_seats // 2
-    #     else:
-    #         if walkway_index > number_of_seats:
-    #             raise IndexError("walkway is outside the row")
-    #     self.walkway_index = walkway_index
 
     def __init__(self, index):
         self.__index = index

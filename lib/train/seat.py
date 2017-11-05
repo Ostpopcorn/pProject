@@ -9,9 +9,10 @@ class SeatBookedError(Exception):
 class Seat(object):
     @classmethod
     def read_from_file(cls, et,train):
+        """This is for the recreation of a train from xml format."""
         s = Seat(et.attrib["number"])
 
-        s.__schedule= SeatSchedule.read_from_file(et,train.schedule)
+        s.__schedule= SeatSchedule.read_from_file(et,train.get_schedule())
 
         return  s
 
@@ -22,6 +23,8 @@ class Seat(object):
         self.__button = None
 
     def get_as_element(self):
+        """Is used for getting the train in xml.etree.ElementTree format.
+        First sets it own attrib and then gets its SeatSchedule from file"""
         import xml.etree.cElementTree as et
         a = et.Element("seat", attrib={"number": str(self.__seat_number)  })
         if self.__schedule.has_any_booking():
@@ -56,6 +59,7 @@ class Seat(object):
         return self.__seat_number
 
     def update_button(self, schedule_index, occupant):
+        """updates the color and text of a button so it matches given parameters"""
         if self.__button is None:
             return
         if not isinstance(schedule_index, list):
@@ -77,10 +81,11 @@ class Seat(object):
         self.__schedule = SeatSchedule(schedule)
 
     def is_booked(self, schedule_index):
-
+        """returns True if a seat is book in at least one of alla indexes given"""
         return self.get_schedule.is_booked(schedule_index)
 
     def book(self, schedule_index, occupant):
+        """books a seat for the given time with the occupant as traveler"""
         if self.__schedule is None:
             raise Exception("No schedule in seat")
 
@@ -101,7 +106,7 @@ class Seat(object):
         self.update_button(schedule_index, occupant)
 
     def get_bookings(self, occupant):
-
+        """gets all bookings for the occupant as a SeatTicket."""
         ticket_parts = self.__schedule.get_bookings(occupant)
         if ticket_parts.__len__() <= 0:
             return
@@ -111,18 +116,15 @@ class Seat(object):
             ticket.add_ticket_part(i)
         return ticket
 
-    def print_formatted(self):
-        print("Seat: {0}".format(self.get_seat_number()))
-        self.__schedule.print_array_formatted()
-
 
 class Walkway(Seat):
+    """A dummy for marking walkway in the train. Some funtions are overwritten to only return None"""
     def __init__(self,parent):
         super(Walkway, self).__init__(-1)
         self.set_parent(parent)
 
     def is_booked(self, schedule_index):
-        return False
+        return None
 
     def get_bookings(self, occupant):
-        return False
+        return None
