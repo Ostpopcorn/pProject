@@ -1,4 +1,5 @@
 class Destination(object):
+    """Just keeps a name of the place."""
     @classmethod
     def read_from_file(cls,et):
         b = et.find("Destination")

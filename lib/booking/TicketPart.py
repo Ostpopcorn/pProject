@@ -1,9 +1,11 @@
 class TicketPart(object):
+    """Contains two destinations and a occupant as a ticket."""
+
     @classmethod
-    def read_from_file(cls,et):
+    def read_from_file(cls, et):
         try:
             s = et.find("start").find("Destination")
-            e =et.find("end").find("Destination")
+            e = et.find("end").find("Destination")
             a = et.find("occupant").attrib
         except AttributeError:
             return
@@ -11,9 +13,8 @@ class TicketPart(object):
         from lib.occupant import Person
         from lib.booking.destination import Destination
         return TicketPart(Destination.read_from_file(s)
-                          ,Destination.read_from_file(e)
+                          , Destination.read_from_file(e)
                           , Person(int(a["id"]), a["name"]))
-
 
     def get_as_element(self):
         import xml.etree.cElementTree as et
@@ -21,15 +22,16 @@ class TicketPart(object):
         s = self.start.get_as_element()
         e = self.destination.get_as_element()
 
-        t = et.SubElement(a,"start")
+        t = et.SubElement(a, "start")
         t.append(s)
 
-        t = et.SubElement(a,"end")
+        t = et.SubElement(a, "end")
         t.append(e)
         a.append(self.occupant.get_as_element())
         return a
 
     def __init__(self, a, b, occupant, train=-1, wagon=-1, seat=-1):
+        """requires a start, end and an occupant."""
         self.occupant = occupant
         self.destination = b
         self.start = a
@@ -42,6 +44,7 @@ class TicketPart(object):
         return a
 
     def formatted_string(self, include_traveler=True):
+        """returns a formatted string for printing"""
         sreturn = "{0} to {1}".format(self.start.name, self.destination.name)
         if include_traveler:
             sreturn += ". {0} as traveler".format(self.occupant.full_name())
@@ -52,7 +55,9 @@ class TicketPart(object):
 
 
 class SeatTicket(object):
+    """Is for all tickets for a occupant in one seat."""
     def __init__(self, seat):
+        """gets train, wagon based on the seat object"""
         self.__train_name = seat.get_parent().get_parent().get_parent().get_name()
         self.__wagon_number = seat.get_parent().get_parent().get_wagon_number()
         self.__seat_number = seat.get_seat_number()
@@ -74,13 +79,15 @@ class SeatTicket(object):
         return s
 
     def mini_display_format(self):
+        """display format for gui and ticket display"""
         return "Wagon: {0}. Seat:{1}. \n{2}\n".format(self.__wagon_number, self.__seat_number,
                                                       self.__get_destination_chain())
 
 
 class CompleteTicket(object):
-    def __init__(self, ticket_parts):
-        self.__tickets = ticket_parts
+    """Should contain all tickets for a occupant for one or many trains."""
+    def __init__(self, seat_tickets):
+        self.__tickets = seat_tickets
 
     def get_file_string(self):
         a_string = ""

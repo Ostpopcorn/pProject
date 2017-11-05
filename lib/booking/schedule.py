@@ -5,6 +5,7 @@ from lib.booking.destination import Destination
 class Schedule(object):
     @classmethod
     def read_from_file(cls, et):
+        """Reads from given xml format and creates a Schedule."""
         s = Schedule()
         for d in et.find("schedule").findall("Destination"):
             ds = Destination(d.attrib["name"])
@@ -12,6 +13,7 @@ class Schedule(object):
         return s
 
     def get_as_element(self):
+        """Gets xml format for storage"""
         import xml.etree.cElementTree as et
         a = et.Element("schedule")
         for seat in self.__destinations:
@@ -20,6 +22,7 @@ class Schedule(object):
         return a
 
     def __init__(self):
+        """just sets a list of Destinations"""
         self.__destinations = []
 
     def add_destination(self, destination):
@@ -28,15 +31,18 @@ class Schedule(object):
         self.__destinations.append(destination)
 
     def number_of_stops(self):
+        """returns the number of places the train will visit"""
         return self.__destinations.__len__()
 
     def __len__(self):
         return self.number_of_stops()
 
     def __getitem__(self, item):
+        """gets corresponding item i __destination."""
         return self.__destinations[item]
 
     def print_array_formatted(self):
+        """gets a nicely formatted list for later printing"""
         for i in range(self.__destinations.__len__()):
             print("#{1}: {0}".format(self.__destinations[i].name, i + 1))
             if i + 1 < self.__destinations.__len__():
@@ -47,6 +53,7 @@ class Schedule(object):
                 # print("k")
 
     def get_destination_chain(self):
+        """gets a string containing all stops with ' - ' between"""
         s = "{} - ".format(self.__destinations[0].name)
         for i in range(1, len(self.__destinations) - 1):
             s += "{} - ".format(self.__destinations[i].name)
@@ -55,6 +62,7 @@ class Schedule(object):
 
 
 class SeatSchedule(object):
+    """Keeps __booking alongside a Schedule object."""
     @classmethod
     def read_from_file(cls, et, par_sch):
         s = SeatSchedule(par_sch)
@@ -69,6 +77,7 @@ class SeatSchedule(object):
         return s
 
     def has_any_booking(self):
+        """if there is any bookings then it returns True"""
         for i in self.__bookings:
             if i is not None:
                 return True
@@ -89,10 +98,12 @@ class SeatSchedule(object):
         self.__bookings = [None for _ in range(self.master_schedule.number_of_stops() - 1)]
 
     def book(self, schedule_index, occupant):
+        """Generates a TicketPart from destinations corresponding to schedule index and places in __bookings """
         self.__bookings[schedule_index] = TicketPart(self.master_schedule[schedule_index]
                                                      , self.master_schedule[schedule_index + 1], occupant)
 
     def is_booked(self, schedule_index):
+        """returns True if there is a booking in the given indexes"""
         if not isinstance(schedule_index, list):
             schedule_index = [schedule_index]
 
@@ -107,6 +118,7 @@ class SeatSchedule(object):
             print("   ", self.__bookings[i])
 
     def get_destination_chain(self):
+        """gets a string containing all stops with ' - ' between"""
         s = "{} - ".format(self.master_schedule[0].start.name)
         for i in range(len(self.master_schedule) - 1):
             s += "{} - ".format(self.master_schedule[i].destination.name)
@@ -114,6 +126,7 @@ class SeatSchedule(object):
         return s
 
     def print_array_formatted(self):
+        """gets a nicely formatted array for later printing"""
         for i in range(self.master_schedule.number_of_stops()):
             print("#{1}: {0}".format(self.master_schedule[i].name, i + 1))
             if i + 1 < self.master_schedule.number_of_stops():
@@ -122,15 +135,18 @@ class SeatSchedule(object):
                     print("  -Booked by: {0}".format(self.__bookings[i].occupant.name))
 
     def get_occupant(self, schedule_index):
+        """gets occupant in the given schedule indexes"""
         try:
             return self.__bookings[schedule_index].occupant
         except AttributeError:
             return
 
     def cancel_book(self, schedule_index):
+        """removes bookings"""
         self.__bookings[schedule_index] = None
 
     def get_bookings(self, occupant):
+        """gets all bookings for a occupant"""
         bookings = []
         if occupant is None:
             return bookings

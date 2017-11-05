@@ -30,6 +30,7 @@ class MainMenu(object):
         self.__train_table.bind('<<ListboxSelect>>', lambda x: self.update_user_info(self.__get_selected_train()))
         self.__train_table.pack()
         self.__btn_get_ticket.pack()
+        self.__btn_get_ticket["state"] = "disabled"
         self.__btn_user_info_train = Label(self.__tk, text="view train")
         self.__btn_user_info_train.pack()
 
@@ -63,6 +64,7 @@ class MainMenu(object):
         if t is None:
             return
         self.update_user_info(t)
+
         return True
 
     def __logout_user(self):
@@ -70,6 +72,7 @@ class MainMenu(object):
         self.__btn_login["command"] = lambda: self.promt_login()
         self.__user = None
         self.__btn_view_train["state"] = "disabled"
+        self.__btn_get_ticket["state"] = "disabled"
         t = self.__get_selected_train()
         if t is None:
             return
@@ -83,6 +86,7 @@ class MainMenu(object):
         self.__btn_login["command"] = lambda: self.__logout_user()
         self.__user = user
         self.__btn_view_train["state"] = "normal"
+        self.__btn_get_ticket["state"] = "normal"
 
     def add_train(self, new_train):
         from lib.train.train import Train

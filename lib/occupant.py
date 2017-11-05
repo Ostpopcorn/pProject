@@ -1,4 +1,5 @@
 class Occupant(object):
+    """The class Seat want to keep as its traveler. Got a ID for keeping track between runs."""
     def __init__(self, ID):
         self.__ID = ID
         self.name = ""
