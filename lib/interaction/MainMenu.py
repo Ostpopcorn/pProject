@@ -5,6 +5,7 @@ import os
 
 
 class MainMenu(object):
+
     def __init__(self):
         self.__user = None
         self.__tk = Tk()
@@ -108,10 +109,10 @@ class MainMenu(object):
 
         from lib.interaction.gui import TrainWindow
 
-        a = TrainWindow(current_train, self.__user, [0, 1])
+        a = TrainWindow(self,current_train, self.__user, [0, 1])
         self.hide_window()
         a.display()
-        a.exit_window()  # withdraw_root()
+        # a.exit_window()  # withdraw_root()
         self.unhide_window()
 
         pass

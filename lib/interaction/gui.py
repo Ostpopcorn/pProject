@@ -9,10 +9,21 @@ from lib.train.wagon import Wagon
 
 
 class TrainWindow(object):
-    def __init__(self, train, user, schedule_index):
+    def on_close(self):
+        try:
+            self.__root.destroy()
+        except:
+            pass
+        self.__master.unhide_window()
+
+    def __init__(self, master,train, user, schedule_index):
+        self.__master = master
         self.__train = train
         self.__root = Tk()
         self.__root.geometry("1000x250")
+
+        self.__root.protocol("WM_DELETE_WINDOW", lambda: self.on_close())
+
         self.btn_book = None
         self.btn_cancel = None
         self.btn_get_ticket = None
@@ -82,11 +93,9 @@ class TrainWindow(object):
         main_frame.pack(side=LEFT)
 
     def exit_window(self):
-        self.__root.quit()
+        self.__root.destroy()
+        self.__master.unhide_window()
 
-    def withdraw_root(self):
-        # self.__root.withdraw()
-        pass
 
     def exit_booking(self):
         self.btn_book["text"] = "Book Trip"
