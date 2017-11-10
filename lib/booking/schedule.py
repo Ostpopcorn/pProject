@@ -12,6 +12,12 @@ class Schedule(object):
             s.add_destination(ds)
         return s
 
+    def max_schedule_index(self):
+        a = []
+        for i in range(self.number_of_stops()):
+            a.append(i)
+        return a
+
     def get_as_element(self):
         """Gets xml format for storage"""
         import xml.etree.cElementTree as et

@@ -2,6 +2,11 @@ class BaseTrain(object):
     def __init__(self):
         self.__parent = None
 
+    def __is_seat(self):
+        from lib.train.seat import Seat
+        return isinstance(self,Seat)
+
+
     @staticmethod
     def correct_index_format(schedule_index):
         new_index = ""
@@ -18,10 +23,16 @@ class BaseTrain(object):
         raise NotImplementedError("Fett kul")
 
     def get_number_of_free_seats(self, schedule_index):
-        number_of_free_seats = 0
-        for row in self:
-            number_of_free_seats += row.get_number_of_free_seats(schedule_index)
-        return number_of_free_seats
+        from lib.train.seat import Seat
+        if self.__is_seat():
+            if self.is_booked(schedule_index):
+                return 0
+            return 1
+        else:
+            number_of_free_seats = 0
+            for row in self:
+                number_of_free_seats += row.get_number_of_free_seats(schedule_index)
+            return number_of_free_seats
 
     def set_parent(self, item):
         """sets parent, hopefully its Train.

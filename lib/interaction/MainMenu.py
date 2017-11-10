@@ -11,6 +11,7 @@ class MainMenu(object):
         self.__tk = Tk()
         self.__tk.geometry("100x500")
         self.__trains = []
+        self.__schedule_index = [0,1]
 
         a = Label(self.__tk, text="Boka tåg")
         a.pack()
@@ -36,7 +37,7 @@ class MainMenu(object):
         self.__btn_user_info_train.pack()
 
     def update_user_info(self, train):
-        text_to_seat = "Train: {0}\n{1}\n{2}".format(train.get_name(), train.get_schedule().get_destination_chain(), "-" * 30)
+        text_to_seat = "Train: {3} {0}\n{1}\n{2}".format(train.get_name(), train.get_schedule().get_destination_chain(), "-" * 30,train.get_number_of_free_seats(self.__schedule_index))
         booking_for_user = train.get_bookings(self.__user)
         if booking_for_user is not None:
             text_to_seat += "\n" + booking_for_user.destination_list()
@@ -109,7 +110,7 @@ class MainMenu(object):
 
         from lib.interaction.gui import TrainWindow
 
-        a = TrainWindow(self,current_train, self.__user, [0, 1])
+        a = TrainWindow(self,current_train, self.__user, self.__schedule_index)
         self.hide_window()
         a.display()
         # a.exit_window()  # withdraw_root()

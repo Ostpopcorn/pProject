@@ -1,4 +1,5 @@
 from lib.booking.schedule import SeatSchedule
+from lib.train.BaseTrain import BaseTrain
 
 
 class SeatBookedError(Exception):
@@ -6,7 +7,10 @@ class SeatBookedError(Exception):
         Exception.__init__(self, text)
 
 
-class Seat(object):
+class Seat(BaseTrain):
+    def __iter__(self):
+        yield self
+
     @classmethod
     def read_from_file(cls, et,train):
         """This is for the recreation of a train from xml format."""
@@ -17,9 +21,9 @@ class Seat(object):
         return  s
 
     def __init__(self, seat_number):
+        super().__init__()
         self.__parent = None
         self.__seat_number = seat_number
-        self.__schedule = None
         self.__button = None
 
     def get_as_element(self):
@@ -30,24 +34,6 @@ class Seat(object):
         if self.__schedule.has_any_booking():
             a.append(self.__schedule.get_as_element())
         return a
-
-    def set_parent(self, item):
-        if self.__parent is None:
-            self.__parent = item
-            return
-        raise AttributeError("Parent is already set")
-
-    def get_parent(self):
-        return self.__parent
-
-    def set_button_command(self, predicate):
-        self.__button["command"] = lambda: predicate(self)
-
-    def set_button_text(self, predicate):
-        if self.__button is None:
-            print("no button assigned")
-            return
-        self.__button["text"] = predicate(self)
 
     def set_button(self, button):
         self.__button = button
@@ -63,6 +49,9 @@ class Seat(object):
 
     def update_buttons(self, schedule_index, occupant):
         self.update_button(schedule_index, occupant)
+
+    def set_button_command(self, predicate):
+        self.__button["command"] = lambda: predicate(self)
 
     def update_button(self, schedule_index, occupant):
         """updates the color and text of a button so it matches given parameters"""

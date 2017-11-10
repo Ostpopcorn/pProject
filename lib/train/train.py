@@ -1,12 +1,14 @@
 from lib.booking.TicketPart import CompleteTicket
+from lib.train.BaseTrain import BaseTrain
 from lib.train.seat import Walkway
 
 
-class Train(object):
+class Train(BaseTrain):
     """The Main container for a train."""
 
     def __init__(self, train_name):
         """Sets the name for the train and creates attributes __schedule and __wagon for later use"""
+        super(Train, self).__init__()
         self.__wagons = []
         self.__schedule = None
         self.__name = train_name
@@ -36,8 +38,7 @@ class Train(object):
 
     def set_schedule(self, schedule):
         self.__schedule = schedule
-        for wagon in self.get_wagons():
-            wagon.set_schedule(schedule)
+        super(Train, self).set_schedule(schedule)
 
     def get_bookings(self, occupant):
         """returns all bookings for a occupant as a CompleteTicket object"""
@@ -47,6 +48,7 @@ class Train(object):
             if temp_tickets is not None:
                 bookings.extend(temp_tickets)
         if len(bookings) <= 0:
+
             return
         ticket = CompleteTicket(bookings)
         return ticket
@@ -78,25 +80,6 @@ class Train(object):
 
     def add_wagon(self, wagon):
         self.__wagons.append(wagon)
-
-    def set_button_command(self, predicate):
-
-        for i in self.__wagons:
-            i.set_button_command(predicate)
-
-    def set_button_text(self, predicate):
-        for i in self.__wagons:
-            i.set_button_text(predicate)
-
-    def change_button_states(self, state):
-        """used for setting seat buttons to disabled or enabled"""
-        for wagon in self.__wagons:
-            wagon.change_button_states(state)
-
-    def update_buttons(self, schedule_index, occupant):
-        """Updates the color of seat buttons depending on schedule_index and occupant."""
-        for wagon in self.__wagons:
-            wagon.update_buttons(schedule_index, occupant)
 
     def print_nice(self, predicate):
         """Prints a nice train in the console."""
