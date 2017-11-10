@@ -43,7 +43,9 @@ class Train(object):
         """returns all bookings for a occupant as a CompleteTicket object"""
         bookings = []
         for wagon in self.__wagons:
-            bookings.extend(wagon.get_bookings(occupant))
+            temp_tickets = wagon.get_bookings(occupant)
+            if temp_tickets is not None:
+                bookings.extend(temp_tickets)
         if len(bookings) <= 0:
             return
         ticket = CompleteTicket(bookings)

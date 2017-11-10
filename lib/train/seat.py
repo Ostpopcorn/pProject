@@ -52,11 +52,17 @@ class Seat(object):
     def set_button(self, button):
         self.__button = button
 
+    def change_button_states(self, state):
+        self.change_button_state(state)
+
     def change_button_state(self, state):
         self.__button['state'] = state
 
     def get_seat_number(self):
         return self.__seat_number
+
+    def update_buttons(self, schedule_index, occupant):
+        self.update_button(schedule_index, occupant)
 
     def update_button(self, schedule_index, occupant):
         """updates the color and text of a button so it matches given parameters"""

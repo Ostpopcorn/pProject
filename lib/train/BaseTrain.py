@@ -46,14 +46,26 @@ class BaseTrain(object):
         for i in self:
             i.change_button_states(state)
 
+    def set_schedule(self, schedule):
+        for row in self:
+            row.set_schedule(schedule)
+
     def update_buttons(self, schedule_index, occupant):
         for i in self:
             i.update_buttons(schedule_index, occupant)
 
     def get_bookings(self, occupant):
-        bookings = []
+        from lib.booking.TicketPart import SeatTicket
+        bookings = None
         for seat in self:
             temp_list = seat.get_bookings(occupant)
             if temp_list is not None:
-                bookings.append(temp_list)
+                if bookings is None:
+                    bookings = []
+                if isinstance(temp_list, list):
+                    bookings.extend(temp_list)
+                elif isinstance(temp_list, SeatTicket):
+                    bookings.append(temp_list)
+                else:
+                    raise ValueError("wierdo")
         return bookings

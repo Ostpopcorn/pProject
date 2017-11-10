@@ -121,7 +121,7 @@ class MainMenu(object):
         try:
             self.__tk.deiconify()
         except:
-            print("already closed!")
+            print("already closed()")
 
     def hide_window(self):
         self.__tk.withdraw()

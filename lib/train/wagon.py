@@ -1,8 +1,13 @@
+from lib.train.BaseTrain import BaseTrain
 from lib.train.row import Row
 
 
-class Wagon(object):
+class Wagon(BaseTrain):
     """Contains row and is meant to be contained in Train."""
+
+    def __iter__(self):
+        for i in self.__rows:
+            yield i
 
     @classmethod
     def generate(cls, wagon_number, number_of_seats_per_row, number_of_rows, walkway_index=-1):
@@ -13,16 +18,10 @@ class Wagon(object):
                                    , 1 + (number_of_seats_per_row * i), i))
         return w
 
-    def get_number_of_free_seats(self, schedule_index):
-        number_of_free_seats = 0
-        for row in self.__rows:
-            number_of_free_seats += row.get_number_of_free_seats(schedule_index)
-        return number_of_free_seats
-
     def __init__(self, wagon_number):
         """sets a given wagon_number and creates __parent and __rows"""
         self.__wagon_number = wagon_number
-        self.__parent = None
+        BaseTrain.__init__(self)
         self.__rows = []
         pass
 
@@ -37,30 +36,8 @@ class Wagon(object):
     def add_row(self, row):
         self.__rows.append(row)
 
-    def set_parent(self, item):
-        """sets parent, hopefully its Train.
-        Only allows setting once"""
-        if self.__parent is None:
-            self.__parent = item
-            return
-        raise AttributeError("Parent is already set")
-
-    def get_parent(self):
-        return self.__parent
-
     def get_wagon_number(self):
         return self.__wagon_number
-
-    def set_schedule(self, schedule):
-        for row in self.__rows:
-            row.set_schedule(schedule)
-
-    def get_bookings(self, occupant):
-        """returns all bookings for a occupant"""
-        bookings = []
-        for row in self.__rows:
-            bookings.extend(row.get_bookings(occupant))
-        return bookings
 
     def get_as_element(self):
         """Is used for getting the train in xml.etree.ElementTree format.
@@ -82,22 +59,6 @@ class Wagon(object):
             w.add_row(r)
 
         return w
-
-    def set_button_command(self, predicate):
-        for i in self.__rows:
-            i.set_button_command(predicate)
-
-    def set_button_text(self, predicate):
-        for i in self.__rows:
-            i.set_button_text(predicate)
-
-    def change_button_states(self, state):
-        for i in self.__rows:
-            i.change_button_states(state)
-
-    def update_buttons(self, schedule_index, occupant):
-        for i in self.__rows:
-            i.update_buttons(schedule_index, occupant)
 
     def print_array(self):
         """returns the class as an array for easier printing later"""

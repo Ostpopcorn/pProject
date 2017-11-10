@@ -1,8 +1,14 @@
+from lib.train.BaseTrain import BaseTrain
 from lib.train.seat import Seat, Walkway
 
 
-class Row(object):
+class Row(BaseTrain):
     """Contains a array of seats. Functions mostly as a list with special functions"""
+
+    def __iter__(self):
+        for i in self.__seats:
+            yield i
+
     @classmethod
     def read_from_file(cls, et,train):
         """This is for the recreation of a train from xml format."""
@@ -35,6 +41,7 @@ class Row(object):
     def add_seat(self, seat):
         self.__seats.append(seat)
 
+
     def get_as_element(self):
         """Is used for getting the train in xml.etree.ElementTree format.
         First sets it own attrib and the run corresponding in all seats"""
@@ -55,38 +62,9 @@ class Row(object):
 
     def __init__(self, index):
         self.__index = index
-        self.__parent = None
+        super(Row, self).__init__()
         self.__seats = []
         self.__walkway_index = -1
-
-    def get_parent(self):
-        return self.__parent
-
-    def set_parent(self, item):
-        if self.__parent is None:
-            self.__parent = item
-            return
-        raise AttributeError("Parent is already set")
-
-    def set_button_text(self, predicate):
-        for i in self.__seats:
-            i.set_button_text(predicate)
-
-    def set_button_command(self, predicate):
-        for i in self.__seats:
-            i.set_button_command(predicate)
-
-    def change_button_states(self, state):
-        for i in self.__seats:
-            i.change_button_state(state)
-
-    def update_buttons(self, schedule_index, occupant):
-        for i in self.__seats:
-            i.update_button(schedule_index, occupant)
-
-    def set_schedule(self, schedule):
-        for seat in self.__seats:
-            seat.set_schedule(schedule)
 
     def print_array(self):
         return_array = []
@@ -108,13 +86,6 @@ class Row(object):
             return self.__seats[item - 1]
         return self.__seats[item]
 
-    def get_bookings(self, occupant):
-        bookings = []
-        for seat in self.__seats:
-            templist = seat.get_bookings(occupant)
-            if templist is not None:
-                bookings.append(templist)
-        return bookings
 
 
 if __name__ == '__main__':
