@@ -11,9 +11,19 @@ class Train(object):
         self.__schedule = None
         self.__name = train_name
 
+    def __iter__(self):
+        for i in self.__wagons:
+            yield i
+
     def __getitem__(self, item):
         """returns corresponding item from __wagons"""
         return self.__wagons[item]
+
+    def get_number_of_free_seats(self, schedule_index):
+        number_of_free_seats = 0
+        for wagon in self.__wagons:
+            number_of_free_seats += wagon.get_number_of_free_seats(schedule_index)
+        return number_of_free_seats
 
     def get_name(self):
         return self.__name

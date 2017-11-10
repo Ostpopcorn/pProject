@@ -13,6 +13,12 @@ class Wagon(object):
                                    , 1 + (number_of_seats_per_row * i), i))
         return w
 
+    def get_number_of_free_seats(self, schedule_index):
+        number_of_free_seats = 0
+        for row in self.__rows:
+            number_of_free_seats += row.get_number_of_free_seats(schedule_index)
+        return number_of_free_seats
+
     def __init__(self, wagon_number):
         """sets a given wagon_number and creates __parent and __rows"""
         self.__wagon_number = wagon_number
