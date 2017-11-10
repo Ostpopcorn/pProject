@@ -14,7 +14,7 @@ class Schedule(object):
 
     def max_schedule_index(self):
         a = []
-        for i in range(self.number_of_stops()):
+        for i in range(self.number_of_stops()-1):
             a.append(i)
         return a
 

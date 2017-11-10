@@ -16,29 +16,31 @@ class TrainWindow(object):
             pass
         self.__master.unhide_window()
 
-    def __init__(self, master,train, user, schedule_index):
+    def __init__(self, master, train, user, schedule_index=None):
         self.__master = master
         self.__train = train
         self.__root = Tk()
         self.__root.geometry("1000x250")
 
+        if schedule_index is not None:
+            self.schedule_index = schedule_index
+        else:
+            self.schedule_index = self.__train.get_max_length_travel()
+
         self.__root.protocol("WM_DELETE_WINDOW", lambda: self.on_close())
 
         self.btn_book = None
-        self.btn_cancel = None
-        self.btn_get_ticket = None
         self.btn_exit = None
         self.btn_height = 1
         self.btn_width = 15
         self.btn_book_width = 2
         self.btn_book_height = 1
         self.current_user = user
-        self.schedule_index = schedule_index
-
         self.create_main_buttons()
         self.create_train_buttons()
 
-        self.__train.update_buttons(self.schedule_index,self.current_user)
+        self.__train.update_buttons(self.schedule_index, self.current_user)
+        self.init_booking()
 
     def create_train_buttons(self):
         train_frame = Frame(self.__root, pady=10, padx=10)
@@ -75,19 +77,10 @@ class TrainWindow(object):
         self.btn_book = Button(main_frame, text="Book trip",
                                command=lambda: self.init_booking(), height=self.btn_height,
                                width=self.btn_width)
-        # self.btn_cancel = Button(main_frame, text="Cancel trip",
-        #                          command=lambda: self.__train.set_button_text(lambda x: x.get_seat_number()),
-        #                          height=self.btn_height,
-        #                          width=self.btn_width)
-        self.btn_get_ticket = Button(main_frame, text="Get yo tickets",
-                                     command=lambda: self.__train.change_button_states("normal"),
-                                     height=self.btn_height,
-                                     width=self.btn_width)
-        self.btn_exit = Button(main_frame, text="Exit",
+
+        self.btn_exit = Button(main_frame, text="Exit booking",
                                command=lambda: self.exit_window(), height=self.btn_height, width=self.btn_width)
-        self.btn_book.pack()
-        #self.btn_cancel.pack()
-        self.btn_get_ticket.pack()
+        # self.btn_book.pack()
         self.btn_exit.pack()
 
         main_frame.pack(side=LEFT)
@@ -96,21 +89,17 @@ class TrainWindow(object):
         self.__root.destroy()
         self.__master.unhide_window()
 
-
     def exit_booking(self):
         self.btn_book["text"] = "Book Trip"
-        for i in [self.btn_get_ticket]:
-            i["state"] = "normal"
         self.__train.change_button_states("disable")
         self.btn_book["command"] = lambda: self.init_booking()
 
     def init_booking(self):
         self.btn_book["text"] = "Exit Booking"
         self.btn_book["command"] = lambda: self.exit_booking()
-        for i in [self.btn_get_ticket]:
-            i["state"] = "disable"
         self.__train.change_button_states("normal")
-        self.__train.set_button_command(lambda x: self.update_seat_button_booking_color(x, self.schedule_index, self.current_user))
+        self.__train.set_button_command(
+            lambda x: self.update_seat_button_booking_color(x, self.schedule_index, self.current_user))
 
     def update_seat_button_booking_color(self, seat, stops, occupant):
         if not isinstance(stops, list):

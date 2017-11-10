@@ -4,8 +4,7 @@ class BaseTrain(object):
 
     def __is_seat(self):
         from lib.train.seat import Seat
-        return isinstance(self,Seat)
-
+        return isinstance(self, Seat)
 
     @staticmethod
     def correct_index_format(schedule_index):

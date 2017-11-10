@@ -30,11 +30,14 @@ class Train(BaseTrain):
     def get_name(self):
         return self.__name
 
+    def get_wagons(self):
+        return self.__wagons
+
     def get_schedule(self):
         return self.__schedule
 
-    def get_wagons(self):
-        return self.__wagons
+    def get_max_length_travel(self):
+        return self.__schedule.max_schedule_index()
 
     def set_schedule(self, schedule):
         self.__schedule = schedule

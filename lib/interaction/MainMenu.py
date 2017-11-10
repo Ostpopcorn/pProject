@@ -5,13 +5,11 @@ import os
 
 
 class MainMenu(object):
-
     def __init__(self):
         self.__user = None
         self.__tk = Tk()
-        self.__tk.geometry("100x500")
+        self.__tk.geometry("200x500")
         self.__trains = []
-        self.__schedule_index = [0,1]
 
         a = Label(self.__tk, text="Boka tåg")
         a.pack()
@@ -37,12 +35,19 @@ class MainMenu(object):
         self.__btn_user_info_train.pack()
 
     def update_user_info(self, train):
-        text_to_seat = "Train: {3} {0}\n{1}\n{2}".format(train.get_name(), train.get_schedule().get_destination_chain(), "-" * 30,train.get_number_of_free_seats(self.__schedule_index))
+        text_to_seat = "Train:  {0}\n{2} Free seats\n{1}".format(train.get_name(), train.get_schedule().get_destination_chain(),
+                                                         train.get_number_of_free_seats(train.get_max_length_travel()))
         booking_for_user = train.get_bookings(self.__user)
         if booking_for_user is not None:
+            text_to_seat += "\n{0}{1}{0}".format("-" * 11, "Tickets")
             text_to_seat += "\n" + booking_for_user.destination_list()
-        self.__btn_user_info_train[
-            "text"] = text_to_seat  # "Train: {0}\n{1}\n{3}\n{2}".format(train.name,train.schedule.get_destination_chain(),
+        else:
+            text_to_seat += "\n" + "-" * 30
+
+        try:
+            self.__btn_user_info_train["text"] = text_to_seat  # "Train: {0}\n{1}\n{3}\n{2}".format(train.name,train.schedule.get_destination_chain(),
+        except:
+            print("cant access btn-user info")
         #   booking_for_user.destination_list(),"-"*30)
 
     def print_ticket(self):
@@ -51,7 +56,7 @@ class MainMenu(object):
         a = self.__user
 
         file = open("{}_{}_{}".format(a.get_ID(), a.name, "ticket.txt"), "w", encoding="utf-8")
-        file.write("Train bookings for: \n{1} ( ID: {0})\n".format(a.get_ID(),a.name))
+        file.write("Train bookings for: \n{1} ( ID: {0})\n".format(a.get_ID(), a.name))
         for i in self.__trains:
             bookings = i.get_bookings(a)
             if bookings is not None:
@@ -104,17 +109,18 @@ class MainMenu(object):
             return
 
     def view_selected_train(self):
-        print("hej")
         current_train = self.__get_selected_train()
         # print(int(self.__train_table.get(self.__trains[self.__get_selected_train_index()][0])[1:3]))
-
+        if current_train is None:
+            return
         from lib.interaction.gui import TrainWindow
 
-        a = TrainWindow(self,current_train, self.__user, self.__schedule_index)
+        a = TrainWindow(self, current_train, self.__user)
         self.hide_window()
         a.display()
         # a.exit_window()  # withdraw_root()
         self.unhide_window()
+        self.update_user_info(current_train)
 
         pass
 
