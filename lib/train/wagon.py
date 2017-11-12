@@ -5,6 +5,11 @@ from lib.train.row import Row
 class Wagon(BaseTrain):
     """Contains row and is meant to be contained in Train."""
 
+    def book_number(self, schedule_index, number_of_seats, occupant):
+        booked = super(Wagon, self).book_number(schedule_index, number_of_seats, occupant)
+
+        return booked
+
     def __iter__(self):
         for i in self.__rows:
             yield i
@@ -87,5 +92,4 @@ class Wagon(BaseTrain):
 
 
 if __name__ == '__main__':
-    ob = Wagon(1, 6, 7, 3)
-    ob.print()
+    pass

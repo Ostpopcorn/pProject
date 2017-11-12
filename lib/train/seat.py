@@ -9,7 +9,7 @@ class SeatBookedError(Exception):
 
 class Seat(BaseTrain):
     def __iter__(self):
-        yield self
+        return self
 
     @classmethod
     def read_from_file(cls, et,train):
@@ -22,7 +22,6 @@ class Seat(BaseTrain):
 
     def __init__(self, seat_number):
         super().__init__()
-        self.__parent = None
         self.__seat_number = seat_number
         self.__button = None
 

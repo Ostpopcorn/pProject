@@ -74,13 +74,13 @@ class TrainWindow(object):
     def create_main_buttons(self):
         main_frame = Frame(self.__root, height=1, width=1, pady=10, padx=10)
 
-        self.btn_book = Button(main_frame, text="Book trip",
-                               command=lambda: self.init_booking(), height=self.btn_height,
+        self.btn_book = Button(main_frame, text="Book fixed",
+                               command=lambda: self.book_fixed(), height=self.btn_height,
                                width=self.btn_width)
 
         self.btn_exit = Button(main_frame, text="Exit booking",
                                command=lambda: self.exit_window(), height=self.btn_height, width=self.btn_width)
-        # self.btn_book.pack()
+        self.btn_book.pack()
         self.btn_exit.pack()
 
         main_frame.pack(side=LEFT)
@@ -92,11 +92,11 @@ class TrainWindow(object):
     def exit_booking(self):
         self.btn_book["text"] = "Book Trip"
         self.__train.change_button_states("disable")
-        self.btn_book["command"] = lambda: self.init_booking()
+        # self.btn_book["command"] = lambda: self.init_booking()
 
     def init_booking(self):
         self.btn_book["text"] = "Exit Booking"
-        self.btn_book["command"] = lambda: self.exit_booking()
+        # self.btn_book["command"] = lambda: self.exit_booking()
         self.__train.change_button_states("normal")
         self.__train.set_button_command(
             lambda x: self.update_seat_button_booking_color(x, self.schedule_index, self.current_user))
@@ -113,6 +113,12 @@ class TrainWindow(object):
 
     def display(self):
         self.__root.mainloop()
+
+    def book_fixed(self):
+        number_to_book = 4
+        if self.__train.book_number(self.schedule_index, number_to_book, self.current_user):
+            print("not enough seats")
+            return False
 
 
 if __name__ == '__main__':

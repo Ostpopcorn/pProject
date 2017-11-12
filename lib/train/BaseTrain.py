@@ -1,3 +1,4 @@
+import abc
 class BaseTrain(object):
     def __init__(self):
         self.__parent = None
@@ -21,8 +22,18 @@ class BaseTrain(object):
     def __iter__(self):
         raise NotImplementedError("Fett kul")
 
+    @abc.abstractmethod
+    def book_number(self,schedule_index,number_of_seats,occupant):
+        booked = 0
+        for i in self:
+            if i.get_number_of_free_seats(schedule_index) >= number_of_seats:
+                if number_of_seats - booked > 0:
+                    booked +=i.book_number(schedule_index,number_of_seats-booked,occupant)
+                else:
+                    break
+        return booked
+
     def get_number_of_free_seats(self, schedule_index):
-        from lib.train.seat import Seat
         if self.__is_seat():
             if self.is_booked(schedule_index):
                 return 0

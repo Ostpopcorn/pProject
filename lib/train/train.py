@@ -6,6 +6,10 @@ from lib.train.seat import Walkway
 class Train(BaseTrain):
     """The Main container for a train."""
 
+    def book_number(self, schedule_index,number_of_seats,occupant):
+        a = super(Train, self).book_number(schedule_index,number_of_seats,occupant)
+        return a
+
     def __init__(self, train_name):
         """Sets the name for the train and creates attributes __schedule and __wagon for later use"""
         super(Train, self).__init__()
@@ -20,12 +24,6 @@ class Train(BaseTrain):
     def __getitem__(self, item):
         """returns corresponding item from __wagons"""
         return self.__wagons[item]
-
-    def get_number_of_free_seats(self, schedule_index):
-        number_of_free_seats = 0
-        for wagon in self.__wagons:
-            number_of_free_seats += wagon.get_number_of_free_seats(schedule_index)
-        return number_of_free_seats
 
     def get_name(self):
         return self.__name
