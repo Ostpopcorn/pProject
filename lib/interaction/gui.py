@@ -17,9 +17,11 @@ class TrainWindow(object):
         self.__master.unhide_window()
 
     def __init__(self, master, train, user, schedule_index=None):
+
         self.__master = master
         self.__train = train
         self.__root = Tk()
+
         self.__root.geometry("1000x250")
 
         if schedule_index is not None:
@@ -30,6 +32,7 @@ class TrainWindow(object):
         self.__root.protocol("WM_DELETE_WINDOW", lambda: self.on_close())
 
         self.btn_book = None
+        self.input_number = None
         self.btn_exit = None
         self.btn_height = 1
         self.btn_width = 15
@@ -49,7 +52,7 @@ class TrainWindow(object):
             wagon = self.__train[tindex]
 
             wagon_frame = Frame(train_frame, pady=10, padx=10)
-            a = Label(train_frame, text=wagon.get_wagon_number())
+            a = Label(train_frame, text="Wagon: {}".format(wagon.get_wagon_number()))
 
             for index in range(wagon.__len__()):
                 row = wagon[index]
@@ -74,14 +77,19 @@ class TrainWindow(object):
     def create_main_buttons(self):
         main_frame = Frame(self.__root, height=1, width=1, pady=10, padx=10)
 
-        self.btn_book = Button(main_frame, text="Book fixed",
+        self.btn_book = Button(main_frame, text="Book",
                                command=lambda: self.book_fixed(), height=self.btn_height,
                                width=self.btn_width)
 
+        self.input_number = Entry(main_frame)
+
         self.btn_exit = Button(main_frame, text="Exit booking",
                                command=lambda: self.exit_window(), height=self.btn_height, width=self.btn_width)
-        self.btn_book.pack()
-        self.btn_exit.pack()
+
+        Label(main_frame,text="Tap seats to book or\nenter the number of\nseats to book").pack()
+        self.input_number.pack(pady=5, padx=10)
+        self.btn_book.pack(pady=5)
+        self.btn_exit.pack(pady=5)
 
         main_frame.pack(side=LEFT)
 
@@ -90,12 +98,12 @@ class TrainWindow(object):
         self.__master.unhide_window()
 
     def exit_booking(self):
-        self.btn_book["text"] = "Book Trip"
+        # self.btn_book["text"] = "Book Trip"
         self.__train.change_button_states("disable")
         # self.btn_book["command"] = lambda: self.init_booking()
 
     def init_booking(self):
-        self.btn_book["text"] = "Exit Booking"
+        # self.btn_book["text"] = "Exit Booking"
         # self.btn_book["command"] = lambda: self.exit_booking()
         self.__train.change_button_states("normal")
         self.__train.set_button_command(
@@ -112,13 +120,38 @@ class TrainWindow(object):
         self.__train.update_buttons(stops, occupant)
 
     def display(self):
+        self.__root.title(self.__train.window_header_display())
         self.__root.mainloop()
 
     def book_fixed(self):
-        number_to_book = 4
-        if self.__train.book_number(self.schedule_index, number_to_book, self.current_user):
+        number_to_book = self.get_number_of_seat_to_book_input()
+        if number_to_book is None:
+            return
+        if self.__train.get_number_of_free_seats(self.schedule_index) >= number_to_book:
+            booked_seats = self.__train.book_number(self.schedule_index, number_to_book, self.current_user)
+            if number_to_book - booked_seats > 0:
+                import tkinter.messagebox
+                answer = tkinter.messagebox.askyesno("Allow split", "No seat found in a single row\n"
+                                                                    "Do you want seats on different rows?")
+                if answer:
+                    print("SPLITING SEATS")
+                    self.__train.book_number(self.schedule_index, number_to_book, self.current_user, True)
+            return True
+        else:
             print("not enough seats")
             return False
+
+    def get_number_of_seat_to_book_input(self):
+        try:
+            number_of_seats = int(self.input_number.get())
+            if not number_of_seats > 0:
+                raise ValueError()
+        except ValueError:
+            import tkinter.messagebox
+            tkinter.messagebox.showinfo("Plizz", "Non integer given")
+            return None
+
+        return number_of_seats
 
 
 if __name__ == '__main__':

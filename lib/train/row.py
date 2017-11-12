@@ -5,9 +5,9 @@ from lib.train.seat import Seat, Walkway
 class Row(BaseTrain):
     """Contains a array of seats. Functions mostly as a list with special functions"""
 
-    def book_number(self, schedule_index, number_of_seats, occupant):
+    def book_number(self, schedule_index, number_of_seats, occupant, allow_separation):
         booked = 0
-        if self.get_number_of_free_seats(schedule_index)>=number_of_seats:
+        if self.get_number_of_free_seats(schedule_index)>=number_of_seats or allow_separation:
             for i in self:
                 if not i.is_booked(schedule_index):
                     if booked < number_of_seats:

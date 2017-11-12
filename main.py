@@ -65,7 +65,7 @@ def generate_new_trains(root):
 if __name__ == '__main__':
 
     a_path = os.path.abspath(os.path.join("lib", "storage", "a.xml"))
-    generate_new = True
+    generate_new = False
     if generate_new:
         root = et.Element("root")
         generate_new_trains(root)

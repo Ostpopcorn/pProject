@@ -6,8 +6,8 @@ from lib.train.seat import Walkway
 class Train(BaseTrain):
     """The Main container for a train."""
 
-    def book_number(self, schedule_index,number_of_seats,occupant):
-        a = super(Train, self).book_number(schedule_index,number_of_seats,occupant)
+    def book_number(self, schedule_index, number_of_seats, occupant,allow_separation= False):
+        a = super(Train, self).book_number(schedule_index, number_of_seats, occupant, allow_separation)
         return a
 
     def __init__(self, train_name):
@@ -116,6 +116,9 @@ class Train(BaseTrain):
                         print("{0:3}".format(predicate(row[seat_column])), end="")
                 print("|", end="")
                 print("")
+
+    def window_header_display(self):
+        return "Train: {0}. Traveling: {1}".format(self.get_name(),self.get_schedule().get_destination_chain())
 
     def train_table_display(self):
         """special function for MainMenu to get a different formatted string to display."""

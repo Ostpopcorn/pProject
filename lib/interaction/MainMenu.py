@@ -8,6 +8,7 @@ class MainMenu(object):
     def __init__(self):
         self.__user = None
         self.__tk = Tk()
+        self.__tk.title("Tågbokning")
         self.__tk.geometry("200x500")
         self.__trains = []
 
@@ -26,9 +27,9 @@ class MainMenu(object):
         self.__btn_view_train = Button(self.__tk, text="view train", command=lambda: self.view_selected_train())
         self.__btn_view_train["state"] = "disabled"
         self.__btn_view_train.pack()
-        self.__train_table = Listbox()
+        self.__train_table = Listbox(height=5)
         self.__train_table.bind('<<ListboxSelect>>', lambda x: self.update_user_info(self.__get_selected_train()))
-        self.__train_table.pack()
+        self.__train_table.pack(pady=5)
         self.__btn_get_ticket.pack()
         self.__btn_get_ticket["state"] = "disabled"
         self.__btn_user_info_train = Label(self.__tk, text="view train")
@@ -54,15 +55,22 @@ class MainMenu(object):
         if self.__user is None:
             return
         a = self.__user
-
-        file = open("{}_{}_{}".format(a.get_ID(), a.name, "ticket.txt"), "w", encoding="utf-8")
+        filename = "{}_{}_{}".format(a.get_ID(), a.name, "ticket.txt")
+        file = open(filename, "w", encoding="utf-8")
         file.write("Train bookings for: \n{1} ( ID: {0})\n".format(a.get_ID(), a.name))
         for i in self.__trains:
             bookings = i.get_bookings(a)
             if bookings is not None:
                 file.write("\nTrain: {}\n".format(i.get_name()))
                 file.write(bookings.get_file_string())
+
         file.close()
+        import tkinter.messagebox
+        answer = tkinter.messagebox.askyesno("Done", "Tickets are now printed to file\nOpen file?")
+        if answer:
+            import os, sys
+
+            os.startfile(os.path.join(os.path.dirname(os.path.realpath(sys.modules['__main__'].__file__)),filename))
 
     def promt_login(self):
         from lib.occupant import Person

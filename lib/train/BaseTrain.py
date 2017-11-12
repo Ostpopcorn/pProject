@@ -23,12 +23,12 @@ class BaseTrain(object):
         raise NotImplementedError("Fett kul")
 
     @abc.abstractmethod
-    def book_number(self,schedule_index,number_of_seats,occupant):
+    def book_number(self, schedule_index, number_of_seats, occupant, allow_separation):
         booked = 0
         for i in self:
-            if i.get_number_of_free_seats(schedule_index) >= number_of_seats:
+            if i.get_number_of_free_seats(schedule_index) >= number_of_seats or allow_separation:
                 if number_of_seats - booked > 0:
-                    booked +=i.book_number(schedule_index,number_of_seats-booked,occupant)
+                    booked += i.book_number(schedule_index, number_of_seats - booked, occupant,allow_separation)
                 else:
                     break
         return booked

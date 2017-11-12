@@ -5,8 +5,8 @@ from lib.train.row import Row
 class Wagon(BaseTrain):
     """Contains row and is meant to be contained in Train."""
 
-    def book_number(self, schedule_index, number_of_seats, occupant):
-        booked = super(Wagon, self).book_number(schedule_index, number_of_seats, occupant)
+    def book_number(self, schedule_index, number_of_seats, occupant, allow_separation):
+        booked = super(Wagon, self).book_number(schedule_index, number_of_seats, occupant,allow_separation)
 
         return booked
 
