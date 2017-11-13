@@ -115,6 +115,9 @@ class TrainWindow(object):
         try:
             seat.book(self.schedule_index, occupant)
         except SeatBookedError:
+            import tkinter.messagebox
+            tkinter.messagebox.showinfo("Seat is aldready booked", "The seat you are trying to book is"
+                                                                   "\nalready booked by someone else")
             print("Seat is already booked")
         # seat.set_button_text(lambda x:x.is_booked(stops))
         self.__train.update_buttons(stops, occupant)

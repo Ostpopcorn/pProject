@@ -122,5 +122,5 @@ class Train(BaseTrain):
 
     def train_table_display(self):
         """special function for MainMenu to get a different formatted string to display."""
-        # TODO Make it display number of free seats
+
         return "{0}".format(self.__name)

@@ -75,6 +75,7 @@ class MainMenu(object):
     def promt_login(self):
         from lib.occupant import Person
         self.__set_user(Person(12345, "Sven"))
+        # self.__set_user(Person(11114, "Åke"))
         t = self.__get_selected_train()
         if t is None:
             return

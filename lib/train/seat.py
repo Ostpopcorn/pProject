@@ -64,7 +64,7 @@ class Seat(BaseTrain):
             if self.__schedule.get_bookings(occupant=occupant):
                 self.__button["background"] = "pale green"
             else:
-                self.__button["background"] = "lavender"
+                self.__button["background"] = "orange red"
                 # self.set_button_text(lambda x:x.is_booked(schedule_index))
 
     @property
