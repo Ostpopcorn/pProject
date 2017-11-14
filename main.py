@@ -74,13 +74,16 @@ if __name__ == '__main__':
         f = et.parse(a_path)
 
     main_menu = MainMenu()
-
+    train_list = []
     for i in f.getroot():
-        main_menu.add_train(Train.read_from_file(i))
+        temp_train = Train.read_from_file(i)
+        train_list.append(temp_train)
+        main_menu.add_train(temp_train)
 
     main_menu.start_ui()
     e = et.Element("root")
-    for i in main_menu.get_trains():
+
+    for i in train_list:
         e.append(i.get_as_element())
 
     f = et.ElementTree(e)

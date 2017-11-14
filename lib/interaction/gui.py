@@ -9,12 +9,7 @@ from lib.train.wagon import Wagon
 
 
 class TrainWindow(object):
-    def on_close(self):
-        try:
-            self.__root.destroy()
-        except:
-            pass
-        self.__master.unhide_window()
+    """Window for booking on individual train"""
 
     def __init__(self, master, train, user, schedule_index=None):
 
@@ -46,35 +41,44 @@ class TrainWindow(object):
         self.init_booking()
 
     def create_train_buttons(self):
+        """Creates buttons corresponding to the __train"""
         train_frame = Frame(self.__root, pady=10, padx=10)
 
-        for tindex in range(self.__train.get_wagons().__len__()):
-            wagon = self.__train[tindex]
+        wagon_bg = "silver"
 
-            wagon_frame = Frame(train_frame, pady=10, padx=10)
+        # Loop for each wagon
+        for train_index in range(self.__train.get_wagons().__len__()):
+            wagon = self.__train[train_index]
+
+            wagon_frame = Frame(train_frame, pady=10, padx=10, bg = wagon_bg)
             a = Label(train_frame, text="Wagon: {}".format(wagon.get_wagon_number()))
 
-            for index in range(wagon.__len__()):
-                row = wagon[index]
-                for jndex in range(row.__len__()):
-                    seat_i = row[jndex]
-                    temp_btn = None
-                    if isinstance(seat_i, Walkway):
-                        temp_btn = Label(wagon_frame,  # text=seat_i.seat_is_booked([0]),
+            wagon_frame.grid(column=train_index, row=1,padx=2)
+            a.grid(column=train_index, row=0)
+
+            # Loops for creating all seat butotns
+            for row_index in range(wagon.__len__()):
+                row = wagon[row_index]
+                for column_index in range(row.__len__()):
+                    current_seat = row[column_index]
+                    # Creates a button for all seat
+                    # If the seat is of type walkway a blank label i created to fill the space
+                    if isinstance(current_seat, Walkway):
+                        temp_btn = Label(wagon_frame, text="", bg = wagon_bg, # text=current_seat.seat_is_booked([0]),
                                          height=self.btn_book_height, width=self.btn_book_width)
 
                     else:
-                        temp_btn = Button(wagon_frame, text=seat_i.get_seat_number(),
+                        temp_btn = Button(wagon_frame, text=current_seat.get_seat_number(),
                                           command="", height=self.btn_book_height, width=self.btn_book_width)
-                    temp_btn.grid(column=index, row=jndex)
-                    temp_btn["state"] = "disable"
-                    seat_i.set_button(temp_btn)
+                    # Packs on correct place
+                    temp_btn.grid(column=row_index, row=column_index)
+                    current_seat.set_button(temp_btn)
 
-            wagon_frame.grid(column=tindex, row=1)
-            a.grid(column=tindex, row=0)
         train_frame.pack(side=LEFT)
 
     def create_main_buttons(self):
+        """Creates the button on the left."""
+        # A frame is used to group
         main_frame = Frame(self.__root, height=1, width=1, pady=10, padx=10)
 
         self.btn_book = Button(main_frame, text="Book",
@@ -84,9 +88,12 @@ class TrainWindow(object):
         self.input_number = Entry(main_frame)
 
         self.btn_exit = Button(main_frame, text="Exit booking",
-                               command=lambda: self.exit_window(), height=self.btn_height, width=self.btn_width)
+                               command=lambda: self.exit_window(), height=self.btn_height,
+                               width=self.btn_width)
 
+        # The text is constant so its not needed for later and is packed immediately
         Label(main_frame,text="Tap seats to book or\nenter the number of\nseats to book").pack()
+
         self.input_number.pack(pady=5, padx=10)
         self.btn_book.pack(pady=5)
         self.btn_exit.pack(pady=5)
@@ -94,18 +101,13 @@ class TrainWindow(object):
         main_frame.pack(side=LEFT)
 
     def exit_window(self):
+        """Destroys current Tk instace."""
         self.__root.destroy()
-        self.__master.unhide_window()
-
-    def exit_booking(self):
-        # self.btn_book["text"] = "Book Trip"
-        self.__train.change_button_states("disable")
-        # self.btn_book["command"] = lambda: self.init_booking()
+        self.on_close()
 
     def init_booking(self):
         # self.btn_book["text"] = "Exit Booking"
         # self.btn_book["command"] = lambda: self.exit_booking()
-        self.__train.change_button_states("normal")
         self.__train.set_button_command(
             lambda x: self.update_seat_button_booking_color(x, self.schedule_index, self.current_user))
 
@@ -155,6 +157,14 @@ class TrainWindow(object):
             return None
 
         return number_of_seats
+
+    def on_close(self):
+        """Called when the Tk window is closed."""
+        self.__master.unhide_window()
+        try:
+            self.__root.destroy()
+        except:
+            pass
 
 
 if __name__ == '__main__':

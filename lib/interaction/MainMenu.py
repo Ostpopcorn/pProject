@@ -1,5 +1,6 @@
 from tkinter import *
 from xml.etree.ElementTree import ElementTree
+import datetime
 
 import os
 
@@ -36,20 +37,14 @@ class MainMenu(object):
         self.__btn_user_info_train.pack()
 
     def update_user_info(self, train):
-        text_to_seat = "Train:  {0}\n{2} Free seats\n{1}".format(train.get_name(), train.get_schedule().get_destination_chain(),
-                                                         train.get_number_of_free_seats(train.get_max_length_travel()))
-        booking_for_user = train.get_bookings(self.__user)
-        if booking_for_user is not None:
-            text_to_seat += "\n{0}{1}{0}".format("-" * 11, "Tickets")
-            text_to_seat += "\n" + booking_for_user.destination_list()
-        else:
-            text_to_seat += "\n" + "-" * 30
+        text_to_seat = ""
+        if train is not None:
+            text_to_seat = train.summary_display(self.__user)
 
         try:
-            self.__btn_user_info_train["text"] = text_to_seat  # "Train: {0}\n{1}\n{3}\n{2}".format(train.name,train.schedule.get_destination_chain(),
+            self.__btn_user_info_train["text"] = text_to_seat
         except:
             print("cant access btn-user info")
-        #   booking_for_user.destination_list(),"-"*30)
 
     def print_ticket(self):
         if self.__user is None:
@@ -70,7 +65,7 @@ class MainMenu(object):
         if answer:
             import os, sys
 
-            os.startfile(os.path.join(os.path.dirname(os.path.realpath(sys.modules['__main__'].__file__)),filename))
+            os.startfile(os.path.join(os.path.dirname(os.path.realpath(sys.modules['__main__'].__file__)), filename))
 
     def promt_login(self):
         from lib.occupant import Person
@@ -104,22 +99,29 @@ class MainMenu(object):
         self.__btn_view_train["state"] = "normal"
         self.__btn_get_ticket["state"] = "normal"
 
-    def add_train(self, new_train):
+    def add_train(self, new_train, compare_time=datetime.datetime.today()):
+        """Adds train if the departure time if after right now."""
         from lib.train.train import Train
         if not isinstance(new_train, Train):
             raise ValueError("Not of type Train")
+
+        if new_train.get_schedule().get_departure_time() < compare_time:
+            return False
+
         self.__trains.append(new_train)
+        return True
 
     def __get_selected_train(self):
+        """Returns the selected train. Returns None if non is selected."""
         try:
             return self.__trains[(int(self.__train_table.get(self.__train_table.curselection()[0])[1:3])) - 1]
         except IndexError:
             print("Non selected")
-            return
+            return None
 
     def view_selected_train(self):
+        """Opens a TrainWindow for the selected train."""
         current_train = self.__get_selected_train()
-        # print(int(self.__train_table.get(self.__trains[self.__get_selected_train_index()][0])[1:3]))
         if current_train is None:
             return
         from lib.interaction.gui import TrainWindow

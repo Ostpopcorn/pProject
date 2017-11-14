@@ -7,10 +7,17 @@ class Schedule(object):
     def read_from_file(cls, et):
         """Reads from given xml format and creates a Schedule."""
         s = Schedule()
-        for d in et.find("schedule").findall("Destination"):
+        ach = et.find("schedule")
+
+        import datetime
+        s.__departure_time = datetime.datetime.strptime(ach.attrib["dep_time"], '%Y:%m:%d:%H:%M')
+        for d in ach.findall("Destination"):
             ds = Destination(d.attrib["name"])
             s.add_destination(ds)
         return s
+
+    def get_departure_time(self):
+        return self.__departure_time
 
     def max_schedule_index(self):
         a = []
@@ -22,6 +29,9 @@ class Schedule(object):
         """Gets xml format for storage"""
         import xml.etree.cElementTree as et
         a = et.Element("schedule")
+        a.attrib["dep_time"] = "{0}:{1}:{2}:{3}:{4}".format(self.__departure_time.year, self.__departure_time.month,
+                                                            self.__departure_time.day, self.__departure_time.hour,
+                                                            self.__departure_time.minute)
         for seat in self.__destinations:
             a.append(seat.get_as_element())
         pass
@@ -30,6 +40,7 @@ class Schedule(object):
     def __init__(self):
         """just sets a list of Destinations"""
         self.__destinations = []
+        self.__departure_time = None
 
     def add_destination(self, destination):
         if not isinstance(destination, Destination):

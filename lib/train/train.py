@@ -6,7 +6,7 @@ from lib.train.seat import Walkway
 class Train(BaseTrain):
     """The Main container for a train."""
 
-    def book_number(self, schedule_index, number_of_seats, occupant,allow_separation= False):
+    def book_number(self, schedule_index, number_of_seats, occupant, allow_separation=False):
         a = super(Train, self).book_number(schedule_index, number_of_seats, occupant, allow_separation)
         return a
 
@@ -49,13 +49,13 @@ class Train(BaseTrain):
             if temp_tickets is not None:
                 bookings.extend(temp_tickets)
         if len(bookings) <= 0:
-
             return
         ticket = CompleteTicket(bookings)
         return ticket
 
     @classmethod
     def read_from_file(cls, et):
+        # TODO Error handling
         """This is for the recreation of a train from xml format.
         First fetches schedule because all seats need it for their setup"""
         t = Train(et.attrib["name"])
@@ -68,7 +68,7 @@ class Train(BaseTrain):
             t.add_wagon(w)
         return t
 
-    def get_as_element(self):
+    def get_as_element(self,et= None):
         """Is used for getting the train in xml.etree.ElementTree format.
         First sets it own attrib and the run corresponding in all wagons"""
         import xml.etree.ElementTree as et
@@ -118,9 +118,23 @@ class Train(BaseTrain):
                 print("")
 
     def window_header_display(self):
-        return "Train: {0}. Traveling: {1}".format(self.get_name(),self.get_schedule().get_destination_chain())
+        """Is Called for the window title"""
+        return "Train: {0}. Traveling: {1}".format(self.get_name(), self.get_schedule().get_destination_chain())
+
+    def summary_display(self, occupant=None):
+        text = "Train: {0}\nDeparting @{3}\n{2} Free seats\n{1}".format(self.get_name(),
+                                                                        self.get_schedule().get_destination_chain(),
+                                                                        self.get_number_of_free_seats(
+                                                                            self.get_max_length_travel()),
+                                                                        self.__schedule.get_departure_time())
+        occupant_tickets = self.get_bookings(occupant)
+        if occupant_tickets is not None:
+            text += "\n{0}{1}{0}".format("-" * 11, "Tickets")
+            text += "\n" + occupant_tickets.destination_list()
+        else:
+            text += "\n" + "-" * 30
+        return text
 
     def train_table_display(self):
         """special function for MainMenu to get a different formatted string to display."""
-
         return "{0}".format(self.__name)

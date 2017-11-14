@@ -1,4 +1,6 @@
 import abc
+
+
 class BaseTrain(object):
     def __init__(self):
         self.__parent = None
@@ -28,7 +30,7 @@ class BaseTrain(object):
         for i in self:
             if i.get_number_of_free_seats(schedule_index) >= number_of_seats or allow_separation:
                 if number_of_seats - booked > 0:
-                    booked += i.book_number(schedule_index, number_of_seats - booked, occupant,allow_separation)
+                    booked += i.book_number(schedule_index, number_of_seats - booked, occupant, allow_separation)
                 else:
                     break
         return booked
