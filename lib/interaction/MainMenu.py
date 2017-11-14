@@ -126,10 +126,10 @@ class MainMenu(object):
             return
         from lib.interaction.gui import TrainWindow
 
-        a = TrainWindow(self, current_train, self.__user)
+        # Creates a window for the __train and shows it + hides mainMenu.
+        current_train_window = TrainWindow(self, current_train, self.__user)
         self.hide_window()
-        a.display()
-        # a.exit_window()  # withdraw_root()
+        current_train_window.display()
         self.unhide_window()
         self.update_user_info(current_train)
 
@@ -140,6 +140,7 @@ class MainMenu(object):
             self.__tk.deiconify()
         except:
             print("already closed()")
+        self.update_user_info(self.__get_selected_train())
 
     def hide_window(self):
         self.__tk.withdraw()
