@@ -3,27 +3,37 @@ from lib.train.seat import Walkway
 
 
 class Train(object):
+    """The main container for a train with Wagons."""
     def __init__(self, train_name):
+        """sets train_name and initializes list __wagon and scedule."""
         self.wagons = []
         self.schedule = None
         self.name = train_name
 
     def add_wagon(self, wagon):
+        """Adds wagons if they are of type wagon"""
+        from lib.train.wagon import Wagon
+        if not isinstance(wagon,Wagon):
+            return False
         self.wagons.append(wagon)
 
     def set_schedule(self, schedule):
+        """Set its own schedule and send it down to all its wagons."""
         self.schedule = schedule
         for wagon in self.wagons:
             wagon.set_schedule(schedule)
 
     def get_bookings(self, occupant):
+        """returns all bookings for a occupant as a CompleteTicket object"""
         bookings = []
         for wagon in self.wagons:
             bookings.extend(wagon.get_bookings(occupant))
         ticket = CompleteTicket(bookings)
         return ticket
 
-    def print_nice_2(self,predicate, horizontal=True):
+    def print_nice_2(self,predicate):
+        """Prints the train in a formatted matter. Uses print_array_formatted().
+        Predicate is used to get specific data from seat object."""
         wagons = []
         print("Train: {0}".format(self.name))
         for wagon in self.wagons:
@@ -38,26 +48,30 @@ class Train(object):
                     print("  ", end="")
             print("")
 
-    def print_nice(self, predicate):
 
-        print("Train: {}".format(self.name))
-        destination_string = []
-        for i in range(self.schedule.__len__()):
-            destination_string.append("#{1:1} {0}".format(self.schedule[i].name, i + 1))
-        print("\n".join(destination_string))
-        for wagon in self.wagons:
-            print("")
-            print(" Wagon #{}".format(wagon.get_wagon_number()))
-            for seat_column in range(wagon.seats_per_row + 1):
-                print("  |", end="")
-                for row in wagon.rows:
-                    # print("{0:3}".format(row[seat_column].get_seat_number()), end="")
-                    if isinstance(row[seat_column], Walkway):
-                        print("{0:3}".format(""), end="")
-                    else:
-                        print("{0:3}".format(predicate(row[seat_column])), end="")
-                print("|", end="")
-                print("")
+    # def print_nice(self, predicate):
+    #     """First try at a formatted print. Not used any more. Uses print_array_formatted().
+    #     Predicate is used to get specific data from seat object."""
+    #
+    #     print("Train: {}".format(self.name))
+    #     destination_string = []
+    #     for i in range(self.schedule.__len__()):
+    #         destination_string.append("#{1:1} {0}".format(self.schedule[i].name, i + 1))
+    #     print("\n".join(destination_string))
+    #     for wagon in self.wagons:
+    #         print("")
+    #         print(" Wagon #{}".format(wagon.get_wagon_number()))
+    #         for seat_column in range(wagon.seats_per_row + 1):
+    #             print("  |", end="")
+    #             for row in wagon.rows:
+    #                 # print("{0:3}".format(row[seat_column].get_seat_number()), end="")
+    #                 if isinstance(row[seat_column], Walkway):
+    #                     print("{0:3}".format(""), end="")
+    #                 else:
+    #                     print("{0:3}".format(predicate(row[seat_column])), end="")
+    #             print("|", end="")
+    #             print("")
 
     def __getitem__(self, item):
+        """Returns corresponding item from self.__wagon"""
         return self.wagons[0]
