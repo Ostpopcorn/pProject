@@ -56,6 +56,7 @@ class TrainWindow(object):
                     current_seat = row[column_index]
                     # Creates a button for all seat
                     # If the seat is of type walkway a blank label i created to fill the space
+                    from lib.train.seat import Walkway
                     if isinstance(current_seat, Walkway):
                         temp_btn = Label(wagon_frame, text="", bg=wagon_bg,  # text=current_seat.seat_is_booked([0]),
                                          height=self.btn_book_height, width=self.btn_book_width)

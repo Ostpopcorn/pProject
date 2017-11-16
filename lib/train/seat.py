@@ -12,13 +12,13 @@ class Seat(BaseTrain):
         return self
 
     @classmethod
-    def read_from_file(cls, et,train):
+    def read_from_file(cls, et, train):
         """This is for the recreation of a train from xml format."""
         s = Seat(et.attrib["number"])
 
-        s.__schedule= SeatSchedule.read_from_file(et,train.get_schedule())
+        s.__schedule = SeatSchedule.read_from_file(et, train.get_schedule())
 
-        return  s
+        return s
 
     def __init__(self, seat_number):
         super().__init__()
@@ -29,7 +29,7 @@ class Seat(BaseTrain):
         """Is used for getting the train in xml.etree.ElementTree format.
         First sets it own attrib and then gets its SeatSchedule from file"""
         import xml.etree.cElementTree as et
-        a = et.Element("seat", attrib={"number": str(self.__seat_number)  })
+        a = et.Element("seat", attrib={"number": str(self.__seat_number)})
         if self.__schedule.has_any_booking():
             a.append(self.__schedule.get_as_element())
         return a
@@ -113,7 +113,8 @@ class Seat(BaseTrain):
 
 class Walkway(Seat):
     """A dummy for marking walkway in the train. Some funtions are overwritten to only return None"""
-    def __init__(self,parent):
+
+    def __init__(self, parent):
         super(Walkway, self).__init__(-1)
         self.set_parent(parent)
 

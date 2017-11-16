@@ -140,7 +140,10 @@ class MainMenu(object):
             self.__tk.deiconify()
         except:
             print("already closed()")
-        self.update_user_info(self.__get_selected_train())
+        try:
+            self.update_user_info(self.__get_selected_train())
+        except:
+            pass
 
     def hide_window(self):
         self.__tk.withdraw()
