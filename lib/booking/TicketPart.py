@@ -3,6 +3,7 @@ class TicketPart(object):
 
     @classmethod
     def read_from_file(cls, et):
+        """Reads given elementtree and returns a TicketPart"""
         try:
             s = et.find("start").find("Destination")
             e = et.find("end").find("Destination")
@@ -17,6 +18,7 @@ class TicketPart(object):
                           , Person(int(a["id"]), a["name"]))
 
     def get_as_element(self):
+        """Converts itself to a elementtree format"""
         import xml.etree.cElementTree as et
         a = et.Element("ticketpart")
         s = self.start.get_as_element()
@@ -40,6 +42,7 @@ class TicketPart(object):
         self.wagon = wagon
 
     def print_array(self):
+        """Returns a array for printing later."""
         a = [self.start.name, self.destination.name, self.occupant.full_name()]
         return a
 
@@ -51,6 +54,7 @@ class TicketPart(object):
         return sreturn
 
     def __str__(self):
+        """returns formatted_string()."""
         return self.formatted_string()
 
 
@@ -64,14 +68,17 @@ class SeatTicket(object):
         self.__ticket_parts = []
 
     def add_ticket_part(self, ticket_part):
+        """Adds ticketpart to its list."""
         if not isinstance(ticket_part, TicketPart):
             raise ValueError("Not a ticket_part")
         self.__ticket_parts.append(ticket_part)
 
     def __last_ticket_part(self):
+        """gets last ticketpart."""
         return self.__ticket_parts[self.__ticket_parts.__len__() - 1]
 
     def __get_destination_chain(self):
+        """Returns a string with all destinations combined with ' - '."""
         s = "{} - ".format(self.__ticket_parts[0].start.name)
         for i in range(len(self.__ticket_parts) - 1):
             s += "{} - ".format(self.__ticket_parts[i].destination.name)
@@ -90,18 +97,21 @@ class CompleteTicket(object):
         self.__tickets = seat_tickets
 
     def get_file_string(self):
+        """Format for printing to file."""
         a_string = ""
         for i in self.__tickets:
             a_string += i.mini_display_format()
         return a_string
 
     def destination_list(self):
+        """returns all destinations combined with \n"""
         rstring = ""
         for i in self.__tickets:
             rstring += i.mini_display_format() + "\n"
         return rstring
 
     def print_formatted(self):
+        """prints itself in a formatted manor to console"""
         number_of_dashes = 10
         print("-" * number_of_dashes)
         print("Ticket: ")
@@ -110,10 +120,9 @@ class CompleteTicket(object):
         print("-" * number_of_dashes)
 
     def __str__(self):
-        rstring = ""
-        for i in self.__tickets:
-            rstring += str(i) + "\n"
-        return rstring
+        """returns self.destination_list()"""
+        return self.destination_list()
 
     def __len__(self):
+        """returns the length of ticketlist."""
         return self.__tickets.__len__()

@@ -3,13 +3,16 @@ from lib.train.BaseTrain import BaseTrain
 
 
 class SeatBookedError(Exception):
+    """Simple error that is raised when a seat is already booked."""
     def __init__(self, text):
         Exception.__init__(self, text)
 
 
 class Seat(BaseTrain):
+    """The container for a seat in the train."""
     def __iter__(self):
-        return self
+        """Must be implemented to shadow parrent class method."""
+        raise AttributeError("Seat is not enumerable")
 
     @classmethod
     def read_from_file(cls, et, train):
@@ -21,8 +24,10 @@ class Seat(BaseTrain):
         return s
 
     def __init__(self, seat_number):
+        """Creats variables and calls parent constructor"""
         super().__init__()
         self.__seat_number = seat_number
+        self.__schedule = None
         self.__button = None
 
     def get_as_element(self):
@@ -35,21 +40,27 @@ class Seat(BaseTrain):
         return a
 
     def set_button(self, button):
+        """Sets button is set."""
         self.__button = button
 
     def change_button_states(self, state):
+        """Calls change_button_state. Is needed because of parent class."""
         self.change_button_state(state)
 
     def change_button_state(self, state):
+        """Chages its buttons state."""
         self.__button['state'] = state
 
     def get_seat_number(self):
+        """returns seatnumber."""
         return self.__seat_number
 
     def update_buttons(self, schedule_index, occupant):
+        """Calls update_button. Is needed because of parent class."""
         self.update_button(schedule_index, occupant)
 
     def set_button_command(self, predicate):
+        """sets button onclick event."""
         self.__button["command"] = lambda: predicate(self)
 
     def update_button(self, schedule_index, occupant):
@@ -69,9 +80,11 @@ class Seat(BaseTrain):
 
     @property
     def get_schedule(self):
+        """returns its schedule."""
         return self.__schedule
 
     def set_schedule(self, schedule):
+        """Creates a seatschedule from schedule and sets it to __schedule."""
         self.__schedule = SeatSchedule(schedule)
 
     def is_booked(self, schedule_index):
@@ -115,6 +128,7 @@ class Walkway(Seat):
     """A dummy for marking walkway in the train. Some funtions are overwritten to only return None"""
 
     def __init__(self, parent):
+        """Gives parent a seat number that is unreachable by the rest of the program"""
         super(Walkway, self).__init__(-1)
         self.set_parent(parent)
 

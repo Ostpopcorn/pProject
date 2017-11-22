@@ -6,30 +6,30 @@ class Row(BaseTrain):
     """Contains a array of seats. Functions mostly as a list with special functions"""
 
     def book_number(self, schedule_index, number_of_seats, occupant, allow_separation):
+        """bookes given number of seats."""
         booked = 0
-        if self.get_number_of_free_seats(schedule_index)>=number_of_seats or allow_separation:
+        if self.get_number_of_free_seats(schedule_index) >= number_of_seats or allow_separation:
             for i in self:
                 if not i.is_booked(schedule_index):
                     if booked < number_of_seats:
                         booked += 1
-                        i.book(schedule_index,occupant)
+                        i.book(schedule_index, occupant)
                     else:
                         break
         return booked
 
-
-
     def __iter__(self):
+        """iterates over its seats."""
         for i in self.__seats:
             yield i
 
     @classmethod
-    def read_from_file(cls, et,train):
+    def read_from_file(cls, et, train):
         """This is for the recreation of a train from xml format."""
         r = Row(int(et.attrib["name"]))
         r.__walkway_index = int(et.attrib["walkway_index"])
         for i in et.findall("seat"):
-            s = Seat.read_from_file(i,train)
+            s = Seat.read_from_file(i, train)
             s.set_parent(r)
             r.add_seat(s)
         return r
@@ -53,8 +53,8 @@ class Row(BaseTrain):
         return r
 
     def add_seat(self, seat):
+        """Adds a seat to the row."""
         self.__seats.append(seat)
-
 
     def get_as_element(self):
         """Is used for getting the train in xml.etree.ElementTree format.
@@ -68,11 +68,11 @@ class Row(BaseTrain):
         return a
 
     def set_walkway_index(self, walkway_index):
+        """Sets walkwayindex for where the blank space should be."""
         if walkway_index == -1:
             self.__walkway_index = int(walkway_index)
             return
         raise ValueError("walkway_index already set")
-
 
     def __init__(self, index):
         self.__index = index
@@ -81,6 +81,7 @@ class Row(BaseTrain):
         self.__walkway_index = -1
 
     def print_array(self):
+        """Array for printing later."""
         return_array = []
         for i in range(0, self.__walkway_index):
             return_array.append("{0:2d}".format(self.__seats[i].get_seat_number()))
@@ -90,16 +91,17 @@ class Row(BaseTrain):
         return return_array
 
     def __len__(self):
+        """Returns the number of seats including walkway. (len+1)"""
         return self.__seats.__len__() + 1
 
     def __getitem__(self, item):
+        """Gets item from object. takes into account walkway"""
         item = int(item)
         if item == self.__walkway_index:
             return Walkway(self)
         if item > self.__walkway_index:
             return self.__seats[item - 1]
         return self.__seats[item]
-
 
 
 if __name__ == '__main__':

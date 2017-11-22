@@ -5,7 +5,7 @@ class TrainWindow(object):
     """Window for booking on individual train"""
 
     def __init__(self, master, train, user, schedule_index=None):
-
+        """Initializes variables and creates buttons according to given trains."""
         self.__master = master
         self.__train = train
         self.__root = Tk()
@@ -17,6 +17,7 @@ class TrainWindow(object):
         else:
             self.schedule_index = self.__train.get_max_length_travel()
 
+        # Triggers when window is closed
         self.__root.protocol("WM_DELETE_WINDOW", lambda: self.on_close())
 
         self.btn_book = None

@@ -3,6 +3,7 @@ from lib.booking.destination import Destination
 
 
 class Schedule(object):
+    """Schedule for trains. contains destinations."""
     @classmethod
     def read_from_file(cls, et):
         """Reads from given xml format and creates a Schedule."""
@@ -17,9 +18,11 @@ class Schedule(object):
         return s
 
     def get_departure_time(self):
+        """Returns departure time."""
         return self.__departure_time
 
     def max_schedule_index(self):
+        """reurns a list with all indexes type out for enumerating"""
         a = []
         for i in range(self.number_of_stops()-1):
             a.append(i)
@@ -43,6 +46,7 @@ class Schedule(object):
         self.__departure_time = None
 
     def add_destination(self, destination):
+        """Adds destination to internal list."""
         if not isinstance(destination, Destination):
             raise ValueError("Is not of type" + Destination.__name__)
         self.__destinations.append(destination)
@@ -52,6 +56,7 @@ class Schedule(object):
         return self.__destinations.__len__()
 
     def __len__(self):
+        """returns number of stops in self."""
         return self.number_of_stops()
 
     def __getitem__(self, item):
@@ -79,9 +84,10 @@ class Schedule(object):
 
 
 class SeatSchedule(object):
-    """Keeps __booking alongside a Schedule object."""
+    """Keeps bookings alongside a Schedule object."""
     @classmethod
     def read_from_file(cls, et, par_sch):
+        """Reads from file and returns a schedule."""
         s = SeatSchedule(par_sch)
         arr = []
         b = et.find("schedule")
@@ -101,6 +107,7 @@ class SeatSchedule(object):
         return False
 
     def get_as_element(self):
+        """Converts itself to a elementtree object for printing to file."""
         import xml.etree.cElementTree as et
         a = et.Element("schedule")
         for book in self.__bookings:
@@ -111,6 +118,7 @@ class SeatSchedule(object):
         return a
 
     def __init__(self, wagon_schedule):
+        """Creates bookings list and sets parrent schedule."""
         self.master_schedule = wagon_schedule
         self.__bookings = [None for _ in range(self.master_schedule.number_of_stops() - 1)]
 
@@ -130,6 +138,7 @@ class SeatSchedule(object):
         return False
 
     def print(self):
+        """Prints it self to console."""
         for i in range(self.__bookings.__len__()):
             print(self.master_schedule[i].name, self.master_schedule[i + 1].name)
             print("   ", self.__bookings[i])

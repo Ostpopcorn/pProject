@@ -1,16 +1,25 @@
 import abc
 
 
+class ErrorInFile(Exception):
+    pass
+
+
 class BaseTrain(object):
+    """THe common base class from train wagon row and seat. Implements many of the common methods."""
+
     def __init__(self):
+        """Initializes parent variable"""
         self.__parent = None
 
     def __is_seat(self):
+        """Checks if self is a instace of Seat"""
         from lib.train.seat import Seat
         return isinstance(self, Seat)
 
     @staticmethod
     def correct_index_format(schedule_index):
+        """Make sure that scheduleindex is in the correct format. Converts if needed."""
         new_index = ""
         if not isinstance(schedule_index, list):
             new_index = [new_index]
@@ -22,10 +31,12 @@ class BaseTrain(object):
         return new_index
 
     def __iter__(self):
+        """requires child to implement method."""
         raise NotImplementedError("Fett kul")
 
     @abc.abstractmethod
     def book_number(self, schedule_index, number_of_seats, occupant, allow_separation):
+        """Books a set number of seat."""
         booked = 0
         for i in self:
             if i.get_number_of_free_seats(schedule_index) >= number_of_seats or allow_separation:
@@ -36,6 +47,7 @@ class BaseTrain(object):
         return booked
 
     def get_number_of_free_seats(self, schedule_index):
+        """Returns the number of free seats in it substructures."""
         if self.__is_seat():
             if self.is_booked(schedule_index):
                 return 0
@@ -55,29 +67,36 @@ class BaseTrain(object):
         raise AttributeError("Parent is already set")
 
     def get_parent(self):
+        """Returns parrent"""
         return self.__parent
 
     def set_button_command(self, predicate):
+        """sets button command for all child"""
         for i in self:
             i.set_button_command(predicate)
 
     def set_button_text(self, predicate):
+        """sets button text for all child"""
         for i in self:
             i.set_button_text(predicate)
 
     def change_button_states(self, state):
+        """sets button states for all child"""
         for i in self:
             i.change_button_states(state)
 
     def set_schedule(self, schedule):
+        """sets schedule for all child"""
         for row in self:
             row.set_schedule(schedule)
 
     def update_buttons(self, schedule_index, occupant):
+        """Updates buttons for all child"""
         for i in self:
             i.update_buttons(schedule_index, occupant)
 
     def get_bookings(self, occupant):
+        """Gets all bookings for given occupant in children"""
         from lib.booking.TicketPart import SeatTicket
         bookings = None
         for seat in self:

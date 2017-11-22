@@ -2,6 +2,8 @@ import os
 
 from lib.interaction.MainMenu import MainMenu
 import xml.etree.ElementTree as et
+
+from lib.train.BaseTrain import ErrorInFile
 from lib.train.train import Train
 
 
@@ -75,10 +77,14 @@ if __name__ == '__main__':
 
     main_menu = MainMenu()
     train_list = []
-    for i in f.getroot():
-        temp_train = Train.read_from_file(i)
-        train_list.append(temp_train)
-        main_menu.add_train(temp_train)
+    try:
+        for i in f.getroot():
+            temp_train = Train.read_from_file(i)
+            train_list.append(temp_train)
+            main_menu.add_train(temp_train)
+    except ErrorInFile:
+        print("Cant read file therefor aborting program.")
+        exit()
 
     main_menu.start_ui()
     e = et.Element("root")

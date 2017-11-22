@@ -6,37 +6,49 @@ import os
 
 
 class MainMenu(object):
+    """The main menu used for selecting train and loggin in."""
     def __init__(self):
+        """Creates buttons and sets window properties like size and title"""
         self.__user = None
         self.__tk = Tk()
-        self.__tk.title("Tågbokning")
-        self.__tk.geometry("200x500")
         self.__trains = []
 
-        a = Label(self.__tk, text="Boka tåg")
-        a.pack()
-        a = Frame(self.__tk)
-        a.pack(pady=10)
+        # Setting tk properties
+        self.__tk.title("Tågbokning")
+        self.__tk.geometry("200x500")
 
+        # Creating a dummy label at the top for good lookings.
+        Label(self.__tk, text="Boka tåg").pack()
+
+        buttons_frame = Frame(self.__tk)
+
+        # Creating buttons
+        self.__user_label = Label(buttons_frame, text="No user")
+        self.__btn_login = Button(buttons_frame, text="Login", command=lambda: self.promt_login())
+        self.__btn_view_train = Button(self.__tk, text="view train", command=lambda: self.view_selected_train())
         self.__btn_get_ticket = Button(self.__tk, text="Get yo tickets",
                                        command=lambda: self.print_ticket())
 
-        self.__user_label = Label(a, text="No user")
-        self.__btn_login = Button(a, text="Login", command=lambda: self.promt_login())
-        self.__user_label.pack(side=LEFT)
-        self.__btn_login.pack(side=LEFT)
-        self.__btn_view_train = Button(self.__tk, text="view train", command=lambda: self.view_selected_train())
-        self.__btn_view_train["state"] = "disabled"
-        self.__btn_view_train.pack()
+        # Creating
         self.__train_table = Listbox(height=5)
         self.__train_table.bind('<<ListboxSelect>>', lambda x: self.update_user_info(self.__get_selected_train()))
+        self.__btn_user_info_train = Label(self.__tk, text="view train")
+
+        # Disabling buttons before login
+        self.__btn_get_ticket["state"] = "disabled"
+        self.__btn_view_train["state"] = "disabled"
+
+        # Packs in correct order
+        buttons_frame.pack(pady=10)
+        self.__user_label.pack(side=LEFT)
+        self.__btn_login.pack(side=LEFT)
+        self.__btn_view_train.pack()
         self.__train_table.pack(pady=5)
         self.__btn_get_ticket.pack()
-        self.__btn_get_ticket["state"] = "disabled"
-        self.__btn_user_info_train = Label(self.__tk, text="view train")
         self.__btn_user_info_train.pack()
 
     def update_user_info(self, train):
+        """Updates label with info about booked tickets based on train."""
         text_to_seat = ""
         if train is not None:
             text_to_seat = train.summary_display(self.__user)
@@ -47,6 +59,7 @@ class MainMenu(object):
             print("cant access btn-user info")
 
     def print_ticket(self):
+        """Print tickets for all trains to file."""
         if self.__user is None:
             return
         a = self.__user
@@ -64,10 +77,10 @@ class MainMenu(object):
         answer = tkinter.messagebox.askyesno("Done", "Tickets are now printed to file\nOpen file?")
         if answer:
             import os, sys
-
             os.startfile(os.path.join(os.path.dirname(os.path.realpath(sys.modules['__main__'].__file__)), filename))
 
     def promt_login(self):
+        """The interface for loggin in users. Curretly only set to hardcoded user"""
         from lib.occupant import Person
         self.__set_user(Person(12345, "Sven"))
         # self.__set_user(Person(11114, "Åke"))
@@ -79,8 +92,10 @@ class MainMenu(object):
         return True
 
     def __logout_user(self):
+        """Loggs out current user and restores ui."""
         self.__user_label["text"] = "No user"
         self.__btn_login["command"] = lambda: self.promt_login()
+        self.__btn_login["text"] = "Login"
         self.__user = None
         self.__btn_view_train["state"] = "disabled"
         self.__btn_get_ticket["state"] = "disabled"
@@ -90,11 +105,13 @@ class MainMenu(object):
         self.update_user_info(t)
 
     def __set_user(self, user):
+        """Given user is logged in. Enables buttons."""
         from lib.occupant import Occupant
         if not isinstance(user, Occupant):
             raise ValueError("Wrong typ. Needs to be ")
         self.__user_label["text"] = user.__str__()
         self.__btn_login["command"] = lambda: self.__logout_user()
+        self.__btn_login["text"] = "Logout"
         self.__user = user
         self.__btn_view_train["state"] = "normal"
         self.__btn_get_ticket["state"] = "normal"
@@ -136,6 +153,7 @@ class MainMenu(object):
         pass
 
     def unhide_window(self):
+        """Unhides window after trainwindow has ran"""
         try:
             self.__tk.deiconify()
         except:
@@ -146,19 +164,23 @@ class MainMenu(object):
             pass
 
     def hide_window(self):
+        """Hides itself."""
         self.__tk.withdraw()
 
     def populate_train_table(self):
+        """Uses its train to populate listbox containing all trains."""
         index = 0
         for train in self.__trains:
             index += 1
             self.__train_table.insert(10, "#{1:2} {0}".format(train.train_table_display(), index))
 
     def start_ui(self):
+        """Method for stating the ui."""
         self.populate_train_table()
         self.__tk.mainloop()
 
     def get_trains(self):
+        """returns its trains list. Used for printing back to file."""
         return self.__trains
 
 

@@ -11,6 +11,7 @@ class Wagon(BaseTrain):
         return booked
 
     def __iter__(self):
+        """Iterates over its Rows."""
         for i in self.__rows:
             yield i
 
@@ -39,9 +40,11 @@ class Wagon(BaseTrain):
         return self.__rows.__len__()
 
     def add_row(self, row):
+        """Adds a row to list."""
         self.__rows.append(row)
 
     def get_wagon_number(self):
+        """Returns its index number."""
         return self.__wagon_number
 
     def get_as_element(self):

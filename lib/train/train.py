@@ -1,5 +1,5 @@
 from lib.booking.TicketPart import CompleteTicket
-from lib.train.BaseTrain import BaseTrain
+from lib.train.BaseTrain import BaseTrain, ErrorInFile
 from lib.train.seat import Walkway
 
 
@@ -7,8 +7,8 @@ class Train(BaseTrain):
     """The Main container for a train."""
 
     def book_number(self, schedule_index, number_of_seats, occupant, allow_separation=False):
-        a = super(Train, self).book_number(schedule_index, number_of_seats, occupant, allow_separation)
-        return a
+        """Books a set number of seat."""
+        return super(Train, self).book_number(schedule_index, number_of_seats, occupant, allow_separation)
 
     def __init__(self, train_name):
         """Sets the name for the train and creates attributes __schedule and __wagon for later use"""
@@ -18,6 +18,7 @@ class Train(BaseTrain):
         self.__name = train_name
 
     def __iter__(self):
+        """Iterates over its wagons."""
         for i in self.__wagons:
             yield i
 
@@ -26,18 +27,23 @@ class Train(BaseTrain):
         return self.__wagons[item]
 
     def get_name(self):
+        """Returns its names"""
         return self.__name
 
     def get_wagons(self):
+        """returns wagon list"""
         return self.__wagons
 
     def get_schedule(self):
+        """returns its schedule."""
         return self.__schedule
 
     def get_max_length_travel(self):
+        """Calls max_schedule_index() from schedule"""
         return self.__schedule.max_schedule_index()
 
     def set_schedule(self, schedule):
+
         self.__schedule = schedule
         super(Train, self).set_schedule(schedule)
 
@@ -55,18 +61,21 @@ class Train(BaseTrain):
 
     @classmethod
     def read_from_file(cls, et):
-        # TODO Error handling
         """This is for the recreation of a train from xml format.
         First fetches schedule because all seats need it for their setup"""
-        t = Train(et.attrib["name"])
-        from lib.booking.schedule import Schedule
-        t.set_schedule(Schedule.read_from_file(et))
-        from lib.train.wagon import Wagon
-        for i in et.find("wagons"):
-            w = Wagon.read_from_file(i, t)
-            w.set_parent(t)
-            t.add_wagon(w)
-        return t
+        try:
+            t = Train(et.attrib["name"])
+            from lib.booking.schedule import Schedule
+            t.set_schedule(Schedule.read_from_file(et))
+            from lib.train.wagon import Wagon
+            for i in et.find("wagons"):
+                w = Wagon.read_from_file(i, t)
+                w.set_parent(t)
+                t.add_wagon(w)
+            return t
+        except KeyError:
+            print("faulty file.")
+            raise ErrorInFile("An error is in the file. Cant read.")
 
     def get_as_element(self,et= None):
         """Is used for getting the train in xml.etree.ElementTree format.
@@ -80,6 +89,7 @@ class Train(BaseTrain):
         return train
 
     def add_wagon(self, wagon):
+        """Adds wagon to its list."""
         self.__wagons.append(wagon)
 
     def print_nice(self, predicate):
@@ -122,6 +132,7 @@ class Train(BaseTrain):
         return "Train: {0}. Traveling: {1}".format(self.get_name(), self.get_schedule().get_destination_chain())
 
     def summary_display(self, occupant=None):
+        """Generats string for shortly displaying all tickets for occupant and general train information."""
         text = "Train: {0}\nDeparting @{3}\n{2} Free seats\n{1}".format(self.get_name(),
                                                                         self.get_schedule().get_destination_chain(),
                                                                         self.get_number_of_free_seats(
